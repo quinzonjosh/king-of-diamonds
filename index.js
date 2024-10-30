@@ -35,7 +35,7 @@ function playRound() {
       player.score--;
     });
 
-    console.log("--------------------------------------------------------");
+  console.log("--------------------------------------------------------");
   console.log("STATS: ");
   console.log("Players choices: " + playerNumbers);
   console.log("Regal's Number: " + regalsNum);
@@ -58,4 +58,9 @@ function indexOfSmallest(arr) {
   return lowestNumIndex;
 }
 
-playRound();
+while(!players.some((player) => player.score === -10)){
+    playRound()
+}
+
+console.log("GAME OVER!!!")
+
