@@ -9,22 +9,15 @@ var players = [
 const eliminationScore = -10;
 
 function playRound() {
-  var userNum = prompt("Select a number from 0 to 100");
-  var numOfPlayers = players.filter(
-    (player) => player.score !== eliminationScore
-  ).length;
+  var userNum = getUserInput();
 
-  while (userNum < 0 || userNum > 100) {
-    alert("Invalid input.");
-    userNum = prompt("Select a number from 0 to 100");
-  }
+  var numOfPlayers = countPlayersRemaining();
 
-  const compChoices = Array.from({ length: 4 }, () =>
-    Math.floor(Math.random() * 101)
-  );
+  const compChoices = generateCompChoices(numOfPlayers);
 
   const playerNumbers = [parseInt(userNum), ...compChoices];
 
+  /********************** DEFAULT RULE **********************/
   const regalsNum =
     playerNumbers.reduce((sum, num) => sum + num, 0) / numOfPlayers;
 
@@ -34,10 +27,12 @@ function playRound() {
 
   const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
   players
-    .filter((player, index) => index !== winnerIndex)
+    .filter((_, index) => index !== winnerIndex)
     .forEach((player) => {
       player.score--;
     });
+
+  /********************************************************/
 
   var eliminatedPlayers = players.filter((player) => player.score === -10);
   eliminatedPlayers.forEach((player) =>
@@ -46,24 +41,56 @@ function playRound() {
 
   players = players.filter((player) => player.score !== -10);
 
-  displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, winnerIndex, players);
-
+  displayResults(
+    playerNumbers,
+    regalsNum,
+    playersToRegalsNumDiff,
+    winnerIndex,
+    players
+  );
 }
 
-function displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, winnerIndex, players){
-    console.log("--------------------------------------------------------");
-    console.log("STATS: ");
-    console.log("Players choices: " + playerNumbers);
-    console.log("Regal's Number: " + regalsNum);
-    console.log(
-      "Players difference to Regal's number: " + playersToRegalsNumDiff
-    );
-    console.log("Winner index: " + winnerIndex);
-    console.log("--------------------------------------------------------");
-    console.log("SCOREBOARD: ");
-    players.forEach((player) => {
-      console.log(`${player.name}: ${player.score}`);
-    });
+function generateCompChoices(numOfPlayers) {
+  return Array.from({ length: numOfPlayers - 1 }, () =>
+    Math.floor(Math.random() * 101)
+  );
+}
+
+function countPlayersRemaining() {
+  return players.filter((player) => player.score !== eliminationScore).length;
+}
+
+function getUserInput() {
+  let userNum = prompt("Select a number from 0 to 100");
+
+  while (userNum < 0 || userNum > 100) {
+    alert("Invalid input.");
+    userNum = prompt("Select a number from 0 to 100");
+  }
+
+  return userNum;
+}
+
+function displayResults(
+  playerNumbers,
+  regalsNum,
+  playersToRegalsNumDiff,
+  winnerIndex,
+  players
+) {
+  console.log("--------------------------------------------------------");
+  console.log("STATS: ");
+  console.log("Players choices: " + playerNumbers);
+  console.log("Regal's Number: " + regalsNum);
+  console.log(
+    "Players difference to Regal's number: " + playersToRegalsNumDiff
+  );
+  console.log("Winner index: " + winnerIndex);
+  console.log("--------------------------------------------------------");
+  console.log("SCOREBOARD: ");
+  players.forEach((player) => {
+    console.log(`${player.name}: ${player.score}`);
+  });
 }
 
 function indexOfSmallestDiff(arr) {
