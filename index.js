@@ -9,7 +9,8 @@ var players = [
 const eliminationScore = -10;
 
 function playRound() {
-  var userNum = getUserInput();
+
+  var userNum = (players[0].name === "USER") ? getUserInput() : -1;
 
   var numOfPlayers = countPlayersRemaining();
 
@@ -26,11 +27,11 @@ function playRound() {
   );
 
   const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
-  players
-    .filter((_, index) => index !== winnerIndex)
-    .forEach((player) => {
-      player.score--;
-    });
+  var losingIndices = playersToRegalsNumDiff
+    .map((_, index) => index)
+    .filter((index) => index != winnerIndex);
+
+  deductPoints(losingIndices);
 
   /********************************************************/
 
@@ -39,7 +40,9 @@ function playRound() {
     console.log(`${player.name} eliminated!`)
   );
 
-  players = players.filter((player) => player.score !== -10);
+  if (eliminatedPlayers.length != 0) {
+    players = players.filter((player) => player.score !== -10);
+  }
 
   displayResults(
     playerNumbers,
@@ -48,6 +51,12 @@ function playRound() {
     winnerIndex,
     players
   );
+}
+
+function deductPoints(arr) {
+  players
+    .filter((_, index) => arr.includes(index))
+    .forEach((player) => player.score--);
 }
 
 function generateCompChoices(numOfPlayers) {
