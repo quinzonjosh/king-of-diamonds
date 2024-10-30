@@ -6,9 +6,12 @@ const players = [
   { name: "CPU4", score: 0 },
 ];
 
+const eliminationScore = -10;
+
+
 function playRound() {
   var userNum = prompt("Select a number from 0 to 100");
-  var numOfPlayers = players.filter((player) => player.score !== -10).length;
+  var numOfPlayers = players.filter((player) => player.score !== eliminationScore).length;
 
   while (userNum < 0 || userNum > 100) {
     alert("Invalid input.");
@@ -58,9 +61,9 @@ function indexOfSmallest(arr) {
   return lowestNumIndex;
 }
 
-while(!players.some((player) => player.score === -10)){
-    playRound()
-}
+// while(!players.some((player) => player.score === eliminationScore)){
+//     playRound()
+// }
 
 console.log("GAME OVER!!!")
 

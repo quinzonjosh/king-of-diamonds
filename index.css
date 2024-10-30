@@ -1,0 +1,41 @@
+body {
+  background: linear-gradient(
+      45deg,
+      #0000 calc(25% / 3),
+      #010101 0 calc(50% / 3),
+      #0000 0 calc(250% / 3),
+      #010101 0 calc(275% / 3),
+      #0000 0
+    ),
+    linear-gradient(
+      45deg,
+      #010101 calc(25% / 3),
+      #0000 0 calc(50% / 3),
+      #010101 0 25%,
+      #0000 0 75%,
+      #010101 0 calc(250% / 3),
+      #0000 0 calc(275% / 3),
+      #010101 0
+    ),
+    linear-gradient(
+      -45deg,
+      #0000 calc(25% / 3),
+      #010101 0 calc(50% / 3),
+      #0000 0 calc(250% / 3),
+      #010101 0 calc(275% / 3),
+      #0000 0
+    ),
+    linear-gradient(
+        -45deg,
+        #010101 calc(25% / 3),
+        #0000 0 calc(50% / 3),
+        #010101 0 25%,
+        #0000 0 75%,
+        #010101 0 calc(250% / 3),
+        #0000 0 calc(275% / 3),
+        #010101 0
+      )
+      #616161;
+  background-size: 42px 42px;
+  background-position: 0 0, 21px 21px;
+}
