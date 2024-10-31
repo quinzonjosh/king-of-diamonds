@@ -1,0 +1,35 @@
+[x] get user input
+    [x] prompt rejects numbers not from 0 to 100
+
+[x] store the current number of players remaining to numOfPlayers
+
+[x] generate computer choices
+    [x] generate numOfPlayers numbers as the CPUs' chosen numbers
+    [x] numbers must be randomized from 0 to 100
+
+[x] playerNumbers store the user inputted numbers and the CPUs' numbers
+
+[x] compute for regals num (average of the nums * 0.8)
+    [x] must be rounded to 2 deci places
+
+[x] playersToRegalsNumDiff stores the absolute difference of each number 
+choices of the players and the regal's num
+    [x] must be rounded to 2 deci places
+
+[x] get the winner of the round
+    [x] case: 1 winner
+    [] case: multiple winners
+
+[] deduct points to the losing players
+
+[] eliminate players if score = eliminationScore = -10
+[] log that the player is eliminated
+
+[] update the list of players remaining
+
+[] display stats
+    [] player's choices
+    [] regal's number
+    [] playersToRegalsNumDiff
+    [] winning index
+    [] current score of all players
