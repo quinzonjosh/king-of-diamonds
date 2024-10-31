@@ -14,9 +14,14 @@ function playRound() {
 
   var numOfPlayers = countPlayersRemaining();
 
-  const compChoices = generateCompChoices(numOfPlayers);
+  const compChoices = generateRandomCompChoices(numOfPlayers);
+//   const compChoices = generateFixedCompChoices(numOfPlayers);
 
   const playerNumbers = [parseInt(userNum), ...compChoices];
+
+    if(players.length === 4){
+        applyMatchingNumPenalty(playerNumbers);
+    }
 
   /********************** DEFAULT RULE **********************/
   const regalsNum =
@@ -53,16 +58,37 @@ function playRound() {
   );
 }
 
+function applyMatchingNumPenalty(playerNumbers){
+    const indexMap = {};
+    const duplicateIndices = [];
+
+    for(let i=0; i<playerNumbers.length; i++){
+        const num = playerNumbers[i];
+        if(indexMap[num] !== undefined){
+            duplicateIndices.push(indexMap[num], i);
+        } else {
+            indexMap[num] = i;
+        }
+    }
+
+    deductPoints(duplicateIndices);
+
+}
+
 function deductPoints(arr) {
   players
     .filter((_, index) => arr.includes(index))
     .forEach((player) => player.score--);
 }
 
-function generateCompChoices(numOfPlayers) {
+function generateRandomCompChoices(numOfPlayers) {
   return Array.from({ length: numOfPlayers - 1 }, () =>
     Math.floor(Math.random() * 101)
   );
+}
+
+function generateFixedCompChoices(numOfPlayers){
+    return [1,2,3,4];
 }
 
 function countPlayersRemaining() {
