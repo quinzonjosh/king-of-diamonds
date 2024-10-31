@@ -2,34 +2,40 @@ var players = [
   { name: "USER", score: 0 },
   { name: "CPU1", score: 0 },
   { name: "CPU2", score: 0 },
-  { name: "CPU3", score: 0 },
-  { name: "CPU4", score: 0 },
+  //   { name: "CPU3", score: 0 },
+  //   { name: "CPU4", score: 0 },
 ];
 
 const eliminationScore = -10;
 
 function playRound() {
-
-  var userNum = (players[0].name === "USER") ? getUserInput() : -1;
+  var userNum = players[0].name === "USER" ? getUserInput() : -1;
 
   var numOfPlayers = countPlayersRemaining();
 
-  const compChoices = generateRandomCompChoices(numOfPlayers);
-//   const compChoices = generateFixedCompChoices(numOfPlayers);
+  //   const compChoices = generateRandomCompChoices(numOfPlayers);
+  const compChoices = generateFixedCompChoices();
 
   const playerNumbers = [parseInt(userNum), ...compChoices];
 
-    if(players.length === 4){
-        applyMatchingNumPenalty(playerNumbers);
-    }
-
-  /********************** DEFAULT RULE **********************/
-  const regalsNum =
-    playerNumbers.reduce((sum, num) => sum + num, 0) / numOfPlayers;
+  const regalsNum = (
+    (playerNumbers.reduce((sum, num) => sum + num, 0) / numOfPlayers) *
+    0.8
+  ).toFixed(2);
 
   const playersToRegalsNumDiff = playerNumbers.map((player) =>
     Math.abs(regalsNum - player).toFixed(2)
   );
+
+  if (players.length <= 4) {
+    applyMatchingNumPenalty(playerNumbers);
+  }
+
+  if (players.length <= 3) {
+    applyExactMatchPenalty(playerNumbers, regalsNum);
+  }
+
+  /********************** DEFAULT RULE **********************/
 
   const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
   var losingIndices = playersToRegalsNumDiff
@@ -58,21 +64,35 @@ function playRound() {
   );
 }
 
-function applyMatchingNumPenalty(playerNumbers){
-    const indexMap = {};
-    const duplicateIndices = [];
+function applyExactMatchPenalty(playerNumbers, regalsNum) {
+  const losingIndices = [];
+  var matching = false;
 
-    for(let i=0; i<playerNumbers.length; i++){
-        const num = playerNumbers[i];
-        if(indexMap[num] !== undefined){
-            duplicateIndices.push(indexMap[num], i);
-        } else {
-            indexMap[num] = i;
-        }
+  playerNumbers.forEach((num, index) => {
+    if (num == regalsNum) {
+        matching = true;    
+    } else if(num != regalsNum && matching == true){
+        losingIndices.push(index);
     }
+  });
 
-    deductPoints(duplicateIndices);
+  deductPoints(losingIndices);
+  deductPoints(losingIndices);
+}
 
+function applyMatchingNumPenalty(playerNumbers) {
+  const indexMap = {};
+  const duplicateIndices = [];
+
+  playerNumbers.forEach((num, index) => {
+    if (indexMap[num] !== undefined) {
+      duplicateIndices.push(indexMap[num], index);
+    } else {
+      indexMap[num] = index;
+    }
+  });
+
+  deductPoints(duplicateIndices);
 }
 
 function deductPoints(arr) {
@@ -87,8 +107,8 @@ function generateRandomCompChoices(numOfPlayers) {
   );
 }
 
-function generateFixedCompChoices(numOfPlayers){
-    return [1,2,3,4];
+function generateFixedCompChoices() {
+  return [11, 22];
 }
 
 function countPlayersRemaining() {
