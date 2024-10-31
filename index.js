@@ -16,6 +16,7 @@ function playRound() {
   );
 
   const compChoices = generateRandomCompChoices(activePlayers.length);
+  // const compChoices = generateFixedCompChoices();
 
   const playerNumbers =
     players[0].name === "USER"
@@ -28,24 +29,27 @@ function playRound() {
     parseFloat(Math.abs(regalsNum - player).toFixed(2))
   );
 
-  /********************** DEFAULT RULE **********************/
-  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
-  var losingIndices = playersToRegalsNumDiff
-    .map((_, index) => index)
-    .filter((index) => index != winnerIndex);
+  if(allPlayerNumsEqual(playerNumbers)){
+    const losingIndices = Array.from({ length: activePlayers.length }, (_, index) => index);
+    deductPoints(losingIndices);
+  } else{
+    evaluateRound(playersToRegalsNumDiff);
+  }
 
-  deductPoints(losingIndices);
-  /********************************************************/
-
-  displayResults(
-    playerNumbers,
-    regalsNum,
-    playersToRegalsNumDiff,
-    winnerIndex,
-    players
-  );
+  displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
 
   eliminatePlayers();
+}
+
+function allPlayerNumsEqual(playerNumbers){
+  const val = playerNumbers[0]
+
+  for(const num of playerNumbers){
+    if(num !== val){
+      return false;
+    }
+  }
+  return true;
 }
 
 function computeRegalsNum(playerNumbers, activePlayers) {
@@ -67,7 +71,6 @@ function displayResults(
   playerNumbers,
   regalsNum,
   playersToRegalsNumDiff,
-  winnerIndex,
   players
 ) {
   console.log("--------------------------------------------------------");
@@ -77,14 +80,13 @@ function displayResults(
   console.log(
     "Players difference to Regal's number: " + playersToRegalsNumDiff
   );
-  console.log("Winner index: " + winnerIndex);
   console.log("SCOREBOARD: ");
   players.forEach((player) => {
     console.log(`${player.name}: ${player.score}`);
   });
 }
 
-function eliminatePlayers(){
+function eliminatePlayers() {
   var eliminatedPlayers = players.filter(
     (player) => player.score === eliminationScore
   );
@@ -97,11 +99,27 @@ function eliminatePlayers(){
   }
 }
 
+function evaluateRound(playersToRegalsNumDiff) {
+  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
+
+  console.log(`${players[winnerIndex].name} WINS`)
+
+  var losingIndices = playersToRegalsNumDiff
+    .map((_, index) => index)
+    .filter((index) => index != winnerIndex);
+
+  deductPoints(losingIndices);
+}
+
 function generateRandomCompChoices(numOfPlayers) {
   return Array.from(
     { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
     () => Math.floor(Math.random() * 101)
   );
+}
+
+function generateFixedCompChoices(numOfPlayers) {
+  return [10, 10, 10, 10];
 }
 
 function getUserInput() {
