@@ -42,17 +42,6 @@ function playRound() {
   deductPoints(losingIndices);
   /********************************************************/
 
-  var eliminatedPlayers = players.filter(
-    (player) => player.score === eliminationScore
-  );
-  eliminatedPlayers.forEach((player) =>
-    console.log(`${player.name} eliminated!`)
-  );
-
-  if (eliminatedPlayers.length != 0) {
-    players = players.filter((player) => player.score !== eliminationScore);
-  }
-
   displayResults(
     playerNumbers,
     regalsNum,
@@ -114,9 +103,19 @@ function getUserInput() {
   return userNum;
 }
 
-/* insert while loop here */
 while (players.length > 1) {
   playRound();
+
+  var eliminatedPlayers = players.filter(
+    (player) => player.score === eliminationScore
+  );
+  eliminatedPlayers.forEach((player) =>
+    console.log(`${player.name} eliminated!`)
+  );
+
+  if (eliminatedPlayers.length != 0) {
+    players = players.filter((player) => player.score !== eliminationScore);
+  }
 }
 
 console.log(
