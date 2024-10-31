@@ -87,7 +87,7 @@ function indexOfSmallestDiff(arr) {
 }
 
 function generateRandomCompChoices(numOfPlayers) {
-  return Array.from({ length: numOfPlayers - 1 }, () =>
+  return Array.from({ length: (players[0].name === "USER") ? numOfPlayers - 1 : numOfPlayers}, () =>
     Math.floor(Math.random() * 101)
   );
 }
