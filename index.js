@@ -11,23 +11,18 @@ const eliminationScore = -5;
 function playRound() {
   const userNum = players[0].name === "USER" ? getUserInput() : -1;
 
-  var numOfPlayers = players.filter(
+  var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
-  ).length;
+  );
 
-  const compChoices = generateRandomCompChoices(numOfPlayers);
+  const compChoices = generateRandomCompChoices(activePlayers.length);
 
   const playerNumbers =
     players[0].name === "USER"
       ? [parseInt(userNum), ...compChoices]
       : [...compChoices];
 
-  const regalsNum = parseFloat(
-    (
-      (playerNumbers.reduce((sum, num) => sum + num, 0) / numOfPlayers) *
-      0.8
-    ).toFixed(2)
-  );
+  const regalsNum = computeRegalsNum(playerNumbers, activePlayers.length);
 
   const playersToRegalsNumDiff = playerNumbers.map((player) =>
     parseFloat(Math.abs(regalsNum - player).toFixed(2))
@@ -49,6 +44,23 @@ function playRound() {
     winnerIndex,
     players
   );
+
+  eliminatePlayers();
+}
+
+function computeRegalsNum(playerNumbers, activePlayers) {
+  return parseFloat(
+    (
+      (playerNumbers.reduce((sum, num) => sum + num, 0) / activePlayers) *
+      0.8
+    ).toFixed(2)
+  );
+}
+
+function deductPoints(arr) {
+  players
+    .filter((_, index) => arr.includes(index))
+    .forEach((player) => player.score--);
 }
 
 function displayResults(
@@ -72,23 +84,23 @@ function displayResults(
   });
 }
 
-function deductPoints(arr) {
-  players
-    .filter((_, index) => arr.includes(index))
-    .forEach((player) => player.score--);
-}
+function eliminatePlayers(){
+  var eliminatedPlayers = players.filter(
+    (player) => player.score === eliminationScore
+  );
+  eliminatedPlayers.forEach((player) =>
+    console.log(`${player.name} eliminated!`)
+  );
 
-function indexOfSmallestDiff(arr) {
-  var lowestNumIndex = 0;
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
+  if (eliminatedPlayers.length != 0) {
+    players = players.filter((player) => player.score !== eliminationScore);
   }
-  return lowestNumIndex;
 }
 
 function generateRandomCompChoices(numOfPlayers) {
-  return Array.from({ length: (players[0].name === "USER") ? numOfPlayers - 1 : numOfPlayers}, () =>
-    Math.floor(Math.random() * 101)
+  return Array.from(
+    { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
+    () => Math.floor(Math.random() * 101)
   );
 }
 
@@ -103,19 +115,16 @@ function getUserInput() {
   return userNum;
 }
 
+function indexOfSmallestDiff(arr) {
+  var lowestNumIndex = 0;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
+  }
+  return lowestNumIndex;
+}
+
 while (players.length > 1) {
   playRound();
-
-  var eliminatedPlayers = players.filter(
-    (player) => player.score === eliminationScore
-  );
-  eliminatedPlayers.forEach((player) =>
-    console.log(`${player.name} eliminated!`)
-  );
-
-  if (eliminatedPlayers.length != 0) {
-    players = players.filter((player) => player.score !== eliminationScore);
-  }
 }
 
 console.log(
