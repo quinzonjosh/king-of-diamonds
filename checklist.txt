@@ -12,12 +12,12 @@
 [x] compute for regals num (average of the nums * 0.8)
     [x] must be rounded to 2 deci places
 
-[] playersToRegalsNumDiff stores the absolute difference of each number 
+[x] playersToRegalsNumDiff stores the absolute difference of each number 
 choices of the players and the regal's num
-    [] must be rounded to 2 deci places
+    [x] must be rounded to 2 deci places
 
-[] get the winner of the round
-    [] case: 1 winner
+[x] get the winner of the round
+    [x] case: 1 winner
     [] case: multiple winners
 
 [] deduct points to the losing players
