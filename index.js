@@ -2,19 +2,19 @@ var players = [
   { name: "USER", score: 0 },
   { name: "CPU1", score: 0 },
   { name: "CPU2", score: 0 },
-  //   { name: "CPU3", score: 0 },
-  //   { name: "CPU4", score: 0 },
+    { name: "CPU3", score: 0 },
+    { name: "CPU4", score: 0 },
 ];
 
-const eliminationScore = -10;
+const eliminationScore = -5;
 
 function playRound() {
   var userNum = players[0].name === "USER" ? getUserInput() : -1;
 
   var numOfPlayers = countPlayersRemaining();
 
-  //   const compChoices = generateRandomCompChoices(numOfPlayers);
-  const compChoices = generateFixedCompChoices();
+    const compChoices = generateRandomCompChoices(numOfPlayers);
+//   const compChoices = generateFixedCompChoices();
 
   const playerNumbers = [parseInt(userNum), ...compChoices];
 
@@ -27,13 +27,13 @@ function playRound() {
     Math.abs(regalsNum - player).toFixed(2)
   );
 
-  if (players.length <= 4) {
-    applyMatchingNumPenalty(playerNumbers);
-  }
+//   if (players.length <= 4) {
+//     applyMatchingNumPenalty(playerNumbers);
+//   }
 
-  if (players.length <= 3) {
-    applyExactMatchPenalty(playerNumbers, regalsNum);
-  }
+//   if (players.length <= 3) {
+//     applyExactMatchPenalty(playerNumbers, regalsNum);
+//   }
 
   /********************** DEFAULT RULE **********************/
 
