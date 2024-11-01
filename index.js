@@ -29,61 +29,11 @@ function playRound() {
     parseFloat(Math.abs(regalsNum - player).toFixed(2))
   );
 
-  evaluateRound(playerNumbers, playersToRegalsNumDiff);
-
-  displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
+  evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
 
   eliminatePlayers();
-}
 
-function evaluateRound(playerNumbers, playersToRegalsNumDiff) {
-  if (playerNumbers.length <= 2) {
-  }
-
-  if (playerNumbers.length <= 3) {
-  }
-
-  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
-    return;
-  }
-
-  if (allPlayerNumsEqual(playerNumbers)) {
-    return;
-  }
-
-  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
-
-  console.log(`${players[winnerIndex].name} WINS`);
-
-  var losingIndices = playersToRegalsNumDiff
-    .map((_, index) => index)
-    .filter((index) => index != winnerIndex);
-
-  deductPoints(losingIndices);
-
-  return;
-}
-
-function hasMatchingNumPenalty(playerNumbers) {
-  const seen = {};
-  const indicesWithMatches = [];
-
-  for (let i = 0; i < playerNumbers.length; i++) {
-    const num = playerNumbers[i];
-    if (seen[num] !== undefined) {
-      indicesWithMatches.push(seen[num], i);
-    } else {
-      seen[num] = i;
-    }
-  }
-
-  if (indicesWithMatches.length !== 0) {
-    deductPoints(indicesWithMatches);
-    console.log("DUPLICATES SPOTTED");
-    return true;
-  } else {
-    return false;
-  }
+  displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
 }
 
 function allPlayerNumsEqual(playerNumbers) {
@@ -136,30 +86,66 @@ function displayResults(
 
 function eliminatePlayers() {
   var eliminatedPlayers = players.filter(
-    (player) => player.score === eliminationScore
+    (player) => player.score <= eliminationScore
   );
   eliminatedPlayers.forEach((player) =>
     console.log(`${player.name} eliminated!`)
   );
 
   if (eliminatedPlayers.length != 0) {
-    players = players.filter((player) => player.score !== eliminationScore);
-  }
+    players = players.filter((player) => player.score > eliminationScore);
+  } 
 
   switch (players.length) {
     case 4:
       console.log("NEW RULE ADDED: ");
       console.log(
-        "If there are 2 people or more choose the same number, the number they " + 
-        "choose becomes invalid and the players who chose the same number will "+ 
-        "lose a point even if the number is closest to Regal's number."
+        "If there are 2 people or more choose the same number, the number they " +
+          "choose becomes invalid and the players who chose the same number will " +
+          "lose a point even if the number is closest to Regal's number."
       );
       break;
     case 3:
+      console.log("NEW RULE ADDED: ");
+      console.log(
+        "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled"
+      );
       break;
     case 2:
       break;
   }
+}
+
+function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
+  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
+
+  var losingIndices = playersToRegalsNumDiff
+    .map((_, index) => index)
+    .filter((index) => index != winnerIndex);
+
+  console.log(`${players[winnerIndex].name} WINS`);
+
+  if (playerNumbers.length <= 2) {
+  }
+
+  if (
+    playerNumbers.length <= 3 &&
+    playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
+  ) {
+    deductPoints(losingIndices);
+  }
+
+  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
+    return;
+  }
+
+  if (allPlayerNumsEqual(playerNumbers)) {
+    return;
+  }
+
+  deductPoints(losingIndices);
+
+  return;
 }
 
 function generateRandomCompChoices(numOfPlayers) {
@@ -170,7 +156,7 @@ function generateRandomCompChoices(numOfPlayers) {
 }
 
 function generateFixedCompChoices(numOfPlayers) {
-  return [10, 10, 10, 10];
+  return [20, 30, 40, 50];
 }
 
 function getUserInput() {
@@ -184,12 +170,41 @@ function getUserInput() {
   return userNum;
 }
 
+function hasMatchingNumPenalty(playerNumbers) {
+  const seen = {};
+  const indicesWithMatches = [];
+
+  for (let i = 0; i < playerNumbers.length; i++) {
+    const num = playerNumbers[i];
+    if (seen[num] !== undefined) {
+      indicesWithMatches.push(seen[num], i);
+    } else {
+      seen[num] = i;
+    }
+  }
+
+  if (indicesWithMatches.length !== 0) {
+    deductPoints(indicesWithMatches);
+    console.log("DUPLICATES SPOTTED");
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function indexOfSmallestDiff(arr) {
   var lowestNumIndex = 0;
   for (let i = 1; i < arr.length; i++) {
     if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
   }
   return lowestNumIndex;
+}
+
+function playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum) {
+  if (playerNumbers[winnerIndex] == Math.round(regalsNum)) {
+    console.log(`${players[winnerIndex].name} HAS HIT THE REGAL'S NUMBER!`);
+    return true;
+  } else return false;
 }
 
 while (players.length > 1) {
