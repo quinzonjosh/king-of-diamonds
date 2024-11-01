@@ -16,39 +16,87 @@ function playRound() {
   );
 
   const compChoices = generateRandomCompChoices(activePlayers.length);
-  // const compChoices = generateFixedCompChoices();
+  // const compChoices = generateFixedCompChoices(activePlayers.length);
 
   const playerNumbers =
     players[0].name === "USER"
       ? [parseInt(userNum), ...compChoices]
       : [...compChoices];
 
-  const regalsNum = computeRegalsNum(playerNumbers, activePlayers.length);
+  const regalsNum = computeRegalsNum(playerNumbers, playerNumbers.length);
 
   const playersToRegalsNumDiff = playerNumbers.map((player) =>
     parseFloat(Math.abs(regalsNum - player).toFixed(2))
   );
 
-  if(allPlayerNumsEqual(playerNumbers)){
-    const losingIndices = Array.from({ length: activePlayers.length }, (_, index) => index);
-    deductPoints(losingIndices);
-  } else{
-    evaluateRound(playersToRegalsNumDiff);
-  }
+  evaluateRound(playerNumbers, playersToRegalsNumDiff);
 
   displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
 
   eliminatePlayers();
 }
 
-function allPlayerNumsEqual(playerNumbers){
-  const val = playerNumbers[0]
+function evaluateRound(playerNumbers, playersToRegalsNumDiff) {
+  if (playerNumbers.length <= 2) {
+  }
 
-  for(const num of playerNumbers){
-    if(num !== val){
+  if (playerNumbers.length <= 3) {
+  }
+
+  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
+    return;
+  }
+
+  if (allPlayerNumsEqual(playerNumbers)) {
+    return;
+  }
+
+  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
+
+  console.log(`${players[winnerIndex].name} WINS`);
+
+  var losingIndices = playersToRegalsNumDiff
+    .map((_, index) => index)
+    .filter((index) => index != winnerIndex);
+
+  deductPoints(losingIndices);
+
+  return;
+}
+
+function hasMatchingNumPenalty(playerNumbers) {
+  const seen = {};
+  const indicesWithMatches = [];
+
+  for (let i = 0; i < playerNumbers.length; i++) {
+    const num = playerNumbers[i];
+    if (seen[num] !== undefined) {
+      indicesWithMatches.push(seen[num], i);
+    } else {
+      seen[num] = i;
+    }
+  }
+
+  if (indicesWithMatches.length !== 0) {
+    deductPoints(indicesWithMatches);
+    console.log("DUPLICATES SPOTTED");
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function allPlayerNumsEqual(playerNumbers) {
+  const val = playerNumbers[0];
+
+  for (const num of playerNumbers) {
+    if (num !== val) {
       return false;
     }
   }
+
+  deductPoints(Array.from({ length: playerNumbers.length }, (_, i) => i));
+  console.log("ALL PLAYER NUMS EQUAL");
   return true;
 }
 
@@ -97,18 +145,21 @@ function eliminatePlayers() {
   if (eliminatedPlayers.length != 0) {
     players = players.filter((player) => player.score !== eliminationScore);
   }
-}
 
-function evaluateRound(playersToRegalsNumDiff) {
-  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
-
-  console.log(`${players[winnerIndex].name} WINS`)
-
-  var losingIndices = playersToRegalsNumDiff
-    .map((_, index) => index)
-    .filter((index) => index != winnerIndex);
-
-  deductPoints(losingIndices);
+  switch (players.length) {
+    case 4:
+      console.log("NEW RULE ADDED: ");
+      console.log(
+        "If there are 2 people or more choose the same number, the number they " + 
+        "choose becomes invalid and the players who chose the same number will "+ 
+        "lose a point even if the number is closest to Regal's number."
+      );
+      break;
+    case 3:
+      break;
+    case 2:
+      break;
+  }
 }
 
 function generateRandomCompChoices(numOfPlayers) {
