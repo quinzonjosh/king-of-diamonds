@@ -1,9 +1,9 @@
 var players = [
   { name: "USER", score: 0 },
   { name: "CPU1", score: 0 },
-  // { name: "CPU2", score: 0 },
-  // { name: "CPU3", score: 0 },
-  // { name: "CPU4", score: 0 },
+  { name: "CPU2", score: 0 },
+  { name: "CPU3", score: 0 },
+  { name: "CPU4", score: 0 },
 ];
 
 const eliminationScore = -5;
@@ -15,8 +15,8 @@ function playRound() {
     (player) => player.score !== eliminationScore
   );
 
-  // const compChoices = generateRandomCompChoices(activePlayers.length);
-  const compChoices = generateFixedCompChoices(activePlayers.length);
+  const compChoices = generateRandomCompChoices(activePlayers.length);
+  // const compChoices = generateFixedCompChoices(activePlayers.length);
 
   const playerNumbers =
     players[0].name === "USER"
@@ -91,28 +91,31 @@ function eliminatePlayers() {
   eliminatedPlayers.forEach((player) =>
     console.log(`${player.name} eliminated!`)
   );
+
   if (eliminatedPlayers.length != 0) {
     players = players.filter((player) => player.score > eliminationScore);
+
   }
 
-  // switch (index) {
-  //   case 4:
-  //     console.log("NEW RULE ADDED: ");
-  //     console.log(
-  //       "If there are 2 people or more choose the same number, the number they " +
-  //         "choose becomes invalid and the players who chose the same number will " +
-  //         "lose a point even if the number is closest to Regal's number."
-  //     );
-  //     break;
-  //   case 3:
-  //     console.log("NEW RULE ADDED: ");
-  //     console.log(
-  //       "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled"
-  //     );
-  //     break;
-  //   case 2:
-  //     break;
-  // }
+  if (players.length === 4) {
+    console.log("NEW RULE ADDED: ");
+    console.log(
+      "If there are 2 people or more choose the same number, the number they " +
+        "choose becomes invalid and the players who chose the same number will " +
+        "lose a point even if the number is closest to Regal's number."
+    );
+  } else if (players.length === 3) {
+    console.log("NEW RULE ADDED: ");
+    console.log(
+      "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled"
+    );
+  } else if (players.length === 2) {
+    console.log("NEW RULE ADDED: ");
+    console.log(
+      "If a player chooses 0, the player who chooses 100 wins the round."
+    );
+  }
+
 }
 
 function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
@@ -121,27 +124,6 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
   var losingIndices = playersToRegalsNumDiff
     .map((_, index) => index)
     .filter((index) => index != winnerIndex);
-
-  if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
-    return;
-  }
-
-  console.log(`${players[winnerIndex].name} WINS`);
-
-  if (
-    playerNumbers.length <= 3 &&
-    playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
-  ) {
-    deductPoints(losingIndices);
-  }
-
-  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
-    return;
-  }
-
-  if (allPlayerNumsEqual(playerNumbers)) {
-    return;
-  }
 
   deductPoints(losingIndices);
 
@@ -218,9 +200,9 @@ function roundIsZeroOneHundredCase(playerNumbers) {
   return false;
 }
 
-// while (players.length > 1) {
+while (players.length > 1) {
   playRound();
-// }
+}
 
 console.log(
   players.length === 1 ? `${players[0].name} WINS!!!` : "NOBODY WINS!!!"
