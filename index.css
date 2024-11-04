@@ -1,10 +1,10 @@
 body {
   box-sizing: border-box;
-  /* background-color: #00090f;
+  background-color: #00090f;
   opacity: 0.9;
   background-image: linear-gradient(#ffffff 1.3px, transparent 1.3px),
     linear-gradient(to right, #ffffff 1.3px, #00090f 1.3px);
-  background-size: 26px 26px; */
+  background-size: 26px 26px;
   display: flex;
   justify-content: center;
 }
