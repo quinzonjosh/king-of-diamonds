@@ -39,9 +39,9 @@ function playRound() {
 
   evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
 
-  eliminatePlayers();
-
   displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
+
+  eliminatePlayers();
 }
 
 function allPlayerNumsEqual(playerNumbers) {
@@ -54,7 +54,7 @@ function allPlayerNumsEqual(playerNumbers) {
   }
 
   deductPoints(Array.from({ length: playerNumbers.length }, (_, i) => i));
-  console.log("ALL PLAYER NUMS EQUAL");
+  // console.log("ALL PLAYER NUMS EQUAL");
   return true;
 }
 
@@ -123,6 +123,27 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
     .map((_, index) => index)
     .filter((index) => index != winnerIndex);
 
+  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
+    return;
+  }
+
+  if (
+    playerNumbers.length <= 3 &&
+    playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
+  ) {
+    deductPoints(losingIndices);
+    deductPoints(losingIndices);
+    return;
+  }
+
+  if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
+    return;
+  }
+
+  if (allPlayerNumsEqual(playerNumbers)) {
+    return;
+  }
+
   deductPoints(losingIndices);
 
   return;
@@ -136,7 +157,7 @@ function generateRandomCompChoices(numOfPlayers) {
 }
 
 function generateFixedCompChoices(numOfPlayers) {
-  return [0];
+  return [10, 10, 10, 10];
 }
 
 function getUserInput() {
@@ -165,7 +186,6 @@ function hasMatchingNumPenalty(playerNumbers) {
 
   if (indicesWithMatches.length !== 0) {
     deductPoints(indicesWithMatches);
-    console.log("DUPLICATES SPOTTED");
     return true;
   } else {
     return false;
@@ -182,7 +202,7 @@ function indexOfSmallestDiff(arr) {
 
 function playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum) {
   if (playerNumbers[winnerIndex] == Math.round(regalsNum)) {
-    console.log(`${players[winnerIndex].name} HAS HIT THE REGAL'S NUMBER!`);
+    // console.log(`${players[winnerIndex].name} HAS HIT THE REGAL'S NUMBER!`);
     return true;
   } else return false;
 }
