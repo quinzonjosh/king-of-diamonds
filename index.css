@@ -1,41 +1,39 @@
 body {
-  background: linear-gradient(
-      45deg,
-      #0000 calc(25% / 3),
-      #010101 0 calc(50% / 3),
-      #0000 0 calc(250% / 3),
-      #010101 0 calc(275% / 3),
-      #0000 0
-    ),
-    linear-gradient(
-      45deg,
-      #010101 calc(25% / 3),
-      #0000 0 calc(50% / 3),
-      #010101 0 25%,
-      #0000 0 75%,
-      #010101 0 calc(250% / 3),
-      #0000 0 calc(275% / 3),
-      #010101 0
-    ),
-    linear-gradient(
-      -45deg,
-      #0000 calc(25% / 3),
-      #010101 0 calc(50% / 3),
-      #0000 0 calc(250% / 3),
-      #010101 0 calc(275% / 3),
-      #0000 0
-    ),
-    linear-gradient(
-        -45deg,
-        #010101 calc(25% / 3),
-        #0000 0 calc(50% / 3),
-        #010101 0 25%,
-        #0000 0 75%,
-        #010101 0 calc(250% / 3),
-        #0000 0 calc(275% / 3),
-        #010101 0
-      )
-      #616161;
-  background-size: 42px 42px;
-  background-position: 0 0, 21px 21px;
+  box-sizing: border-box;
+  /* background-color: #00090f;
+  opacity: 0.9;
+  background-image: linear-gradient(#ffffff 1.3px, transparent 1.3px),
+    linear-gradient(to right, #ffffff 1.3px, #00090f 1.3px);
+  background-size: 26px 26px; */
+  display: flex;
+  justify-content: center;
+}
+
+.numbers-board-container {
+  background-color: #527569;
+  width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr); 
+  grid-template-rows: repeat(5, 1fr); 
+  border: 1px solid black;
+}
+
+.number {
+  height: 50px;
+  border: 1px solid black;
+  
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  color: black;
+}
+
+.number:hover{
+  background-color: #00090f;
+  color: white;
+  cursor: pointer;
 }
