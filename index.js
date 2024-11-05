@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   /******************************************** MAIN **************************************/
+  
+  // displayNumbersSelected();
+  // displayComputations();
+  // displayCurrentScoreboard();
+  // displayUpdatedScoreboard();
+
   displayNumbersBoard();
   /****************************************************************************************/
 

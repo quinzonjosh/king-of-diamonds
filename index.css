@@ -1,27 +1,59 @@
 body {
-  box-sizing: border-box;
   background-color: #00090f;
   opacity: 0.9;
   background-image: linear-gradient(#ffffff 1.3px, transparent 1.3px),
     linear-gradient(to right, #ffffff 1.3px, #00090f 1.3px);
   background-size: 26px 26px;
+  box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+}
+
+.player-score {
+  font-size: 30px;
+}
+
+.player-label {
+  font-size: 35px;
+}
+
+.player-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.scoreboard-container {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin: 30px 0px;
+  align-content: center;
+  padding: 80px;
+}
+
+.dashboard-container {
+  width: 1000px;
+  height: 300px;
+  margin-bottom: 25px;
 }
 
 .numbers-board-container {
   background-color: #527569;
   width: 1000px;
   display: grid;
-  grid-template-columns: repeat(20, 1fr); 
-  grid-template-rows: repeat(5, 1fr); 
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(5, 1fr);
   border: 1px solid black;
 }
 
 .number {
   height: 50px;
   border: 1px solid black;
-  
+
   background-color: white;
 
   display: flex;
@@ -32,7 +64,7 @@ body {
   color: black;
 }
 
-.number:hover{
+.number:hover {
   background-color: #00090f;
   color: white;
   cursor: pointer;

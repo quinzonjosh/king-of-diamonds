@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(
     players.length === 1 ? `${players[0].name} WINS!!!` : "NOBODY WINS!!!"
   );
-  /****************************************************************************************/
 
   function playRound() {
     const userNum = players[0].name === "USER" ? getUserInput() : -1;
