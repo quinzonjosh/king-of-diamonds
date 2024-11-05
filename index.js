@@ -26,36 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // setTimeout(() => {
   // }, 3000);
 
-  function displayNumbersBoard() {
-    const numbersBoard = document.createElement("div");
-
-    numbersBoard.classList.add("numbers-board-container");
-
-    for (let i = 0; i < 19; i++) {
-      const emptyCell = document.createElement("div");
-
-      numbersBoard.appendChild(emptyCell);
-    }
-
-    for (let i = 0; i <= 100; i++) {
-      const numberCell = document.createElement("div");
-
-      numberCell.classList.add("number");
-      numberCell.id = `btn${i}`;
-
-      numberCell.textContent = `${i}`;
-      numberCell.value = i;
-
-      numberCell.addEventListener("click", () => playRound(numberCell.value));
-
-      numbersBoard.appendChild(numberCell);
-    }
-
-    const body = document.querySelector("body");
-
-    body.appendChild(numbersBoard);
-  }
-
   function displayScoreboard(){
     const dashboardContainer = document.querySelector('.dashboard-container');
 
@@ -81,8 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
       scoreboardContainer.appendChild(playersContainer);
     });
-
-    // console.log(scoreboardContainer);
 
     dashboardContainer.appendChild(scoreboardContainer);
   }
