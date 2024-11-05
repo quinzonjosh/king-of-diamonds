@@ -11,34 +11,35 @@ body {
   align-items: center;
 }
 
-.player-score {
-  font-size: 30px;
+.score {
+  font-size: 26px;
 }
 
-.player-label {
-  font-size: 35px;
+.player-name {
+  font-size: 28px;
+  margin-bottom: 10px;
 }
 
-.player-container {
+.players-container {
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.scoreboard-label {
+  margin: 50px 0px;
+  font-size: 40px;
 }
 
 .scoreboard-container {
-  display: flex;
-  justify-content: space-around;
   text-align: center;
-  background-color: rgb(255, 255, 255);
-  margin: 30px 0px;
-  align-content: center;
-  padding: 80px;
 }
 
 .dashboard-container {
   width: 1000px;
-  height: 300px;
-  margin-bottom: 25px;
+  margin: 25px 0px;
+  background-color: white;
+  height: 310px;
 }
 
 .numbers-board-container {

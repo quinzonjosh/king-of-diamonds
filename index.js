@@ -14,8 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // displayCurrentScoreboard();
   // displayUpdatedScoreboard();
 
-  displayScoreboard();
-  // displayNumbersBoard();
+  // displayScoreboard();
   /****************************************************************************************/
 
   function playRound(userNum) {
@@ -26,11 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // setTimeout(() => {
   // }, 3000);
 
+  function displayNumbersSelected(userNum){
+
+  }
+
   function displayScoreboard(){
     const dashboardContainer = document.querySelector('.dashboard-container');
 
     const scoreboardContainer = document.createElement('div');
     scoreboardContainer.classList.add("scoreboard-container");
+
+    // const scoreBoardLabel = document.createElement("div");
+    // scoreBoardLabel.classList.add()
+    // scoreBoardLabel.textContent = "SCOREBOARD";
+
+    // scoreboardContainer.appendChild(scoreBoardLabel);
 
     players.forEach(player =>{
       const playersContainer = document.createElement('div');
