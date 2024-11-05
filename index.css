@@ -29,7 +29,7 @@ body {
   display: flex;
   justify-content: space-around;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(255, 255, 255);
   margin: 30px 0px;
   align-content: center;
   padding: 80px;
@@ -48,6 +48,8 @@ body {
   grid-template-columns: repeat(20, 1fr);
   grid-template-rows: repeat(5, 1fr);
   border: 1px solid black;
+  gap: 2px;
+  padding: 2px;
 }
 
 .number {

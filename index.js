@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+  var players = [
+    { name: "USER", score: 0 },
+    { name: "CPU1", score: 0 },
+    { name: "CPU2", score: 0 },
+    { name: "CPU3", score: 0 },
+    { name: "CPU4", score: 0 },
+  ];
+  
   /******************************************** MAIN **************************************/
   
   // displayNumbersSelected();
@@ -6,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // displayCurrentScoreboard();
   // displayUpdatedScoreboard();
 
-  displayNumbersBoard();
+  displayScoreboard();
+  // displayNumbersBoard();
   /****************************************************************************************/
 
   function playRound(userNum) {
@@ -20,16 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayNumbersBoard() {
     const numbersBoard = document.createElement("div");
 
-    numbersBoard.classList.add(".numbers-board-container");
-
-    numbersBoard.style.backgroundColor = "#527569";
-    numbersBoard.style.width = "1000px";
-    numbersBoard.style.display = "grid";
-    numbersBoard.style.gridTemplateColumns = "repeat(20, 1fr)";
-    numbersBoard.style.gridTemplateRows = "repeat(5, 1fr)";
-    numbersBoard.style.border = "1px solid black";
-    numbersBoard.style.gap = "2px";
-    numbersBoard.style.padding = "2px";
+    numbersBoard.classList.add("numbers-board-container");
 
     for (let i = 0; i < 19; i++) {
       const emptyCell = document.createElement("div");
@@ -40,33 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i <= 100; i++) {
       const numberCell = document.createElement("div");
 
-      numberCell.classList.add(".number");
-      numberCell.classList.add(`#btn${i}`);
-
-      numberCell.style.height = "50px";
-      numberCell.style.border = "50px";
-      numberCell.style.backgroundColor = "white";
-      numberCell.style.display = "flex";
-      numberCell.style.alignItems = "center";
-      numberCell.style.justifyContent = "center";
-      numberCell.style.fontSize = "24px";
-      numberCell.style.color = "black";
-      numberCell.style.border = "1px solid black";
+      numberCell.classList.add("number");
+      numberCell.id = `btn${i}`;
 
       numberCell.textContent = `${i}`;
       numberCell.value = i;
-
-      numberCell.addEventListener("mouseover", () => {
-        numberCell.style.backgroundColor = "#00090f";
-        numberCell.style.color = "white";
-        numberCell.style.cursor = "pointer";
-      });
-
-      numberCell.addEventListener("mouseout", () => {
-        numberCell.style.backgroundColor = "white";
-        numberCell.style.color = "black";
-        numberCell.style.cursor = "pointer";
-      });
 
       numberCell.addEventListener("click", () => playRound(numberCell.value));
 
@@ -76,5 +54,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = document.querySelector("body");
 
     body.appendChild(numbersBoard);
+  }
+
+  function displayScoreboard(){
+    const dashboardContainer = document.querySelector('.dashboard-container');
+
+    const scoreboardContainer = document.createElement('div');
+    scoreboardContainer.classList.add("scoreboard-container");
+
+    players.forEach(player =>{
+      const playersContainer = document.createElement('div');
+      playersContainer.classList.add("player-container");
+
+      const playerLabel = document.createElement('div');
+      playerLabel.classList.add("player-label");
+      playerLabel.textContent = player.name;
+
+      const playerScore = document.createElement('div');
+      playerScore.classList.add("player-score");
+      playerScore.id = `${(player.name).toLowerCase()}-score`;
+
+      playerScore.textContent = '0';
+
+      playersContainer.appendChild(playerLabel);
+      playersContainer.appendChild(playerScore);
+    
+      scoreboardContainer.appendChild(playersContainer);
+    });
+
+    // console.log(scoreboardContainer);
+
+    dashboardContainer.appendChild(scoreboardContainer);
   }
 });
