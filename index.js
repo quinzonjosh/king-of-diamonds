@@ -63,6 +63,13 @@ function displayScoreboard() {
   dashboardContainer.appendChild(playersContainer);
 }
 
+function displayPlayerChoices(playerNumbers){
+  const playerContainer = createElement("div");
+
+  const playerName = createElement("")
+
+}
+
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
@@ -104,6 +111,18 @@ function playRound(userNum) {
   disableNumbersBtn();
 
   display(userNum);
+
+  setTimeout(() => {
+    display('');
+    displayPlayerChoices(playerNumbers);
+  }, 2000);
+
+
+  // setTimeout(() => {
+  //   display('');
+  // }, 2000);
+
+  // displayScoreboard();
 
   // enableNumbersBtn();
 }

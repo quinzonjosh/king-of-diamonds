@@ -12,31 +12,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.score {
-  font-size: 33px;
+.score{
+  font-size: 38px;
 }
 
-.player-name {
-  font-size: 35px;
-  margin-bottom: 10px;
+.player-name{
+  font-size: 38px;
+  margin: 0px 0px 15px 0px;
 }
 
-.players-container {
+.players-container{
+  text-align: center;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  text-align: center;
+  gap: 75px
 }
 
-.scoreboard-label {
-  margin: 50px 0px 42px 0px;
-  font-size: 40px;
-  font-weight: 600;
-}
-
-.scoreboard-container {
-  text-align: center;
-}
+.players-numbers-label{
+  font-size: 50px;
+} 
 
 .dashboard-container {
   width: 1000px;
@@ -44,8 +37,9 @@ body {
   background-color: white;
   height: 310px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   font-size: 60px;
 }
 
