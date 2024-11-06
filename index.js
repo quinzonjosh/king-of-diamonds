@@ -19,6 +19,11 @@ const eliminationScore = -10;
 // setTimeout(() => {
 // }, 3000);
 
+function display(text){
+  const dashboardContainer = document.querySelector(".dashboard-container");
+  dashboardContainer.innerHTML = text;
+}
+
 function displayScoreboard() {
   const dashboardContainer = document.querySelector(".dashboard-container");
 
@@ -58,19 +63,6 @@ function displayScoreboard() {
   dashboardContainer.appendChild(playersContainer);
 }
 
-function dashboardPrompter(text) {
-  const dashboardContainer = document.querySelector(".dashboard-container");
-  const prompt = document.querySelector(".prompt");
-
-  dashboardContainer.removeChild(prompt);
-
-  const content = document.createElement("div");
-  content.classList.add("prompt");
-  content.textContent = text;
-
-  dashboardContainer.appendChild(content);
-}
-
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
@@ -97,20 +89,21 @@ function enableNumbersBtn() {
 }
 
 function playRound(userNum) {
-  disableNumbersBtn();
-
-  dashboardPrompter(userNum);
-
+  
   var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
   );
-
+  
   const compChoices = generateRandomCompChoices(activePlayers.length);
-
+  
   const playerNumbers =
-    players[0].name === "USER"
-      ? [parseInt(userNum), ...compChoices]
-      : [...compChoices];
+  players[0].name === "USER"
+  ? [parseInt(userNum), ...compChoices]
+  : [...compChoices];
+
+  disableNumbersBtn();
+
+  display(userNum);
 
   // enableNumbersBtn();
 }

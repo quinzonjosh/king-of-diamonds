@@ -12,12 +12,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.prompt{
-  font-size: 60px;
-  text-align: center;
-  padding: 120px;
-}
-
 .score {
   font-size: 33px;
 }
@@ -46,9 +40,13 @@ body {
 
 .dashboard-container {
   width: 1000px;
-  margin: 25px 0px;
+  margin: 25px 0;
   background-color: white;
   height: 310px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
 }
 
 .numbers-board-container {
