@@ -19,10 +19,6 @@ const eliminationScore = -10;
 // setTimeout(() => {
 // }, 3000);
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  dashboardPrompter("Select a number")
-});
-
 function displayScoreboard() {
   const dashboardContainer = document.querySelector(".dashboard-container");
 
@@ -62,23 +58,48 @@ function displayScoreboard() {
   dashboardContainer.appendChild(playersContainer);
 }
 
-function dashboardPrompter(text){
+function dashboardPrompter(text) {
   const dashboardContainer = document.querySelector(".dashboard-container");
-  
+  const prompt = document.querySelector(".prompt");
+
+  dashboardContainer.removeChild(prompt);
+
   const content = document.createElement("div");
   content.classList.add("prompt");
-  content.id = "select-num-label";
   content.textContent = text;
 
   dashboardContainer.appendChild(content);
-  
+}
+
+function disableNumbersBtn() {
+  const numbers = document.querySelectorAll(".number");
+  numbers.forEach((number) => {
+    number.removeAttribute("onclick");
+    number.style.cursor = 'default';
+  });
+}
+
+function enableNumbersBtn() {
+  const numbers = document.querySelectorAll(".number");
+  numbers.forEach((number) => {
+    number.addEventListener('mouseover', ()=>{
+      number.style.backgroundColor = "#00090f";
+      number.style.color = "white";
+      number.style.cursor = "pointer";      
+    });
+
+    number.addEventListener('mouseout', ()=>{
+      number.style.backgroundColor = "white";
+      number.style.color = "black";
+      number.style.cursor = "default";      
+    });
+  });
 }
 
 function playRound(userNum) {
-  const dashboardContainer = document.querySelector(".dashboard-container");
-  const selectNumLabel = document.querySelector("#select-num-label");
+  disableNumbersBtn();
 
-  dashboardContainer.removeChild(selectNumLabel);
+  dashboardPrompter(userNum);
 
   var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
@@ -86,8 +107,12 @@ function playRound(userNum) {
 
   const compChoices = generateRandomCompChoices(activePlayers.length);
 
-  const playerNumbers = players[0].name === "USER" ? [parseInt(userNum), ...compChoices] : [...compChoices];
+  const playerNumbers =
+    players[0].name === "USER"
+      ? [parseInt(userNum), ...compChoices]
+      : [...compChoices];
 
+  // enableNumbersBtn();
 }
 
 function generateRandomCompChoices(numOfPlayers) {
@@ -95,4 +120,4 @@ function generateRandomCompChoices(numOfPlayers) {
     { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
     () => Math.floor(Math.random() * 101)
   );
-} 
+}
