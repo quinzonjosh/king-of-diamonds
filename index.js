@@ -6,29 +6,29 @@ var players = [
   { name: "CPU4", score: 0 },
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
-  /******************************************** MAIN **************************************/
-  // displayNumbersSelected();
-  // displayComputations();
-  // displayCurrentScoreboard();
-  // displayUpdatedScoreboard();
-  displayScoreboard();
-  /****************************************************************************************/
-  // timeout template
-  // setTimeout(() => {
-  // }, 3000);
-});
+const eliminationScore = -10;
+
+/******************************************** MAIN **************************************/
+// displayNumbersSelected();
+// displayComputations();
+// displayCurrentScoreboard();
+// displayUpdatedScoreboard();
+// displayScoreboard();
+/****************************************************************************************/
+// timeout template
+// setTimeout(() => {
+// }, 3000);
 
 function displayScoreboard() {
   const dashboardContainer = document.querySelector(".dashboard-container");
-  
+
   const scoreboardContainer = document.createElement("div");
   scoreboardContainer.classList.add("scoreboard-container");
 
   const scoreboardLabel = document.createElement("div");
   scoreboardLabel.classList.add("scoreboard-label");
   scoreboardLabel.textContent = "SCOREBOARD";
-  
+
   scoreboardContainer.appendChild(scoreboardLabel);
 
   dashboardContainer.appendChild(scoreboardContainer);
@@ -36,10 +36,10 @@ function displayScoreboard() {
   const playersContainer = document.createElement("div");
   playersContainer.classList.add("players-container");
 
-  players.forEach(player=>{
-    const playerContainer = document.createElement("div"); 
+  players.forEach((player) => {
+    const playerContainer = document.createElement("div");
     playerContainer.classList.add("player-container");
-    
+
     const playerName = document.createElement("div");
     playerName.classList.add("player-name");
     playerName.textContent = `${player.name}`;
@@ -53,12 +53,25 @@ function displayScoreboard() {
     playerContainer.appendChild(score);
 
     playersContainer.appendChild(playerContainer);
-
   });
 
   dashboardContainer.appendChild(playersContainer);
 }
 
 function playRound(userNum) {
-  console.log(userNum);
+  var activePlayers = players.filter(
+    (player) => player.score !== eliminationScore
+  );
+
+  const compChoices = generateRandomCompChoices(activePlayers.length);
+
+  const playerNumbers = players[0].name === "USER" ? [parseInt(userNum), ...compChoices] : [...compChoices];
+
+}
+
+function generateRandomCompChoices(numOfPlayers) {
+  return Array.from(
+    { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
+    () => Math.floor(Math.random() * 101)
+  );
 }

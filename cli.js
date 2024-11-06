@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
       "Regal's number.",
   ];
 
-  const eliminationScore = -10;
 
   /******************************************** MAIN **************************************/
   while (players.length > 1) {
