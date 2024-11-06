@@ -1,66 +1,64 @@
+var players = [
+  { name: "USER", score: 0 },
+  { name: "CPU1", score: 0 },
+  { name: "CPU2", score: 0 },
+  { name: "CPU3", score: 0 },
+  { name: "CPU4", score: 0 },
+];
+
 document.addEventListener("DOMContentLoaded", () => {
-  var players = [
-    { name: "USER", score: 0 },
-    { name: "CPU1", score: 0 },
-    { name: "CPU2", score: 0 },
-    { name: "CPU3", score: 0 },
-    { name: "CPU4", score: 0 },
-  ];
-  
   /******************************************** MAIN **************************************/
-  
   // displayNumbersSelected();
   // displayComputations();
   // displayCurrentScoreboard();
   // displayUpdatedScoreboard();
-
-  // displayScoreboard();
+  displayScoreboard();
   /****************************************************************************************/
-
-  function playRound(userNum) {
-    console.log(userNum);
-  }
-
   // timeout template
   // setTimeout(() => {
   // }, 3000);
-
-  function displayNumbersSelected(userNum){
-
-  }
-
-  function displayScoreboard(){
-    const dashboardContainer = document.querySelector('.dashboard-container');
-
-    const scoreboardContainer = document.createElement('div');
-    scoreboardContainer.classList.add("scoreboard-container");
-
-    // const scoreBoardLabel = document.createElement("div");
-    // scoreBoardLabel.classList.add()
-    // scoreBoardLabel.textContent = "SCOREBOARD";
-
-    // scoreboardContainer.appendChild(scoreBoardLabel);
-
-    players.forEach(player =>{
-      const playersContainer = document.createElement('div');
-      playersContainer.classList.add("player-container");
-
-      const playerLabel = document.createElement('div');
-      playerLabel.classList.add("player-label");
-      playerLabel.textContent = player.name;
-
-      const playerScore = document.createElement('div');
-      playerScore.classList.add("player-score");
-      playerScore.id = `${(player.name).toLowerCase()}-score`;
-
-      playerScore.textContent = '0';
-
-      playersContainer.appendChild(playerLabel);
-      playersContainer.appendChild(playerScore);
-    
-      scoreboardContainer.appendChild(playersContainer);
-    });
-
-    dashboardContainer.appendChild(scoreboardContainer);
-  }
 });
+
+function displayScoreboard() {
+  const dashboardContainer = document.querySelector(".dashboard-container");
+  
+  const scoreboardContainer = document.createElement("div");
+  scoreboardContainer.classList.add("scoreboard-container");
+
+  const scoreboardLabel = document.createElement("div");
+  scoreboardLabel.classList.add("scoreboard-label");
+  scoreboardLabel.textContent = "SCOREBOARD";
+  
+  scoreboardContainer.appendChild(scoreboardLabel);
+
+  dashboardContainer.appendChild(scoreboardContainer);
+
+  const playersContainer = document.createElement("div");
+  playersContainer.classList.add("players-container");
+
+  players.forEach(player=>{
+    const playerContainer = document.createElement("div"); 
+    playerContainer.classList.add("player-container");
+    
+    const playerName = document.createElement("div");
+    playerName.classList.add("player-name");
+    playerName.textContent = `${player.name}`;
+
+    const score = document.createElement("div");
+    score.classList.add("score");
+    score.id = `${player.name.toLowerCase()}-score`;
+    score.textContent = `${player.score}`;
+
+    playerContainer.appendChild(playerName);
+    playerContainer.appendChild(score);
+
+    playersContainer.appendChild(playerContainer);
+
+  });
+
+  dashboardContainer.appendChild(playersContainer);
+}
+
+function playRound(userNum) {
+  console.log(userNum);
+}
