@@ -19,6 +19,10 @@ const eliminationScore = -10;
 // setTimeout(() => {
 // }, 3000);
 
+document.addEventListener('DOMContentLoaded', ()=>{
+  dashboardPrompter("Select a number")
+});
+
 function displayScoreboard() {
   const dashboardContainer = document.querySelector(".dashboard-container");
 
@@ -58,7 +62,24 @@ function displayScoreboard() {
   dashboardContainer.appendChild(playersContainer);
 }
 
+function dashboardPrompter(text){
+  const dashboardContainer = document.querySelector(".dashboard-container");
+  
+  const content = document.createElement("div");
+  content.classList.add("prompt");
+  content.id = "select-num-label";
+  content.textContent = text;
+
+  dashboardContainer.appendChild(content);
+  
+}
+
 function playRound(userNum) {
+  const dashboardContainer = document.querySelector(".dashboard-container");
+  const selectNumLabel = document.querySelector("#select-num-label");
+
+  dashboardContainer.removeChild(selectNumLabel);
+
   var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
   );
@@ -74,4 +95,4 @@ function generateRandomCompChoices(numOfPlayers) {
     { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
     () => Math.floor(Math.random() * 101)
   );
-}
+} 
