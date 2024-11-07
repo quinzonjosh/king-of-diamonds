@@ -69,8 +69,7 @@ function displayGameInfo(dashboardLabel, activePlayers) {
   dashboardContainer.appendChild(playersContainer);
 }
 
-function displayRegalsNumber(activePlayers){
-  const playerNumbers = activePlayers.map(player => player.number);
+function displayRegalsNumber(playerNumbers){
   const sum = playerNumbers.reduce((acc, num)=> acc + num, 0);
   const average = sum / playerNumbers.length; 
   const regalsNum = (average * 0.8).toFixed(2);
@@ -95,6 +94,10 @@ function enableNumbersBtn() {
       number.style.color = "black";
       number.style.cursor = "default";
     });
+
+    number.addEventListener('click', ()=>{
+      playRound(parseInt(number.textContent));
+    });
   });
 }
 
@@ -104,6 +107,7 @@ function playRound(userNum) {
   );
 
   var regalsNum;
+  var playersToRegalsNumDiff;
 
   activePlayers.forEach((player) => {
     if (player.name === "USER") {
@@ -112,6 +116,8 @@ function playRound(userNum) {
       player.number = generateRandomNumber();
     }
   });
+
+  const playerNumbers = activePlayers.map(player => player.number);
 
   disableNumbersBtn();
 
@@ -122,17 +128,19 @@ function playRound(userNum) {
     
     setTimeout(() => {
 
-      regalsNum = displayRegalsNumber(activePlayers);
+      regalsNum = displayRegalsNumber(playerNumbers);
 
-      console.log(regalsNum);
-      
+      const playersToRegalsNumDiff = playerNumbers.map((player) =>
+        parseFloat(Math.abs(regalsNum - player).toFixed(2))
+      );
+
       // displayGameInfo("Scoreboard", activePlayers);
       
+      // enableNumbersBtn();
 
       
-    }, 2000);
+    }, 6000);
 
-    // enableNumbersBtn();
 
   }, 2000);
 
