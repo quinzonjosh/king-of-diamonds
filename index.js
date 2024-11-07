@@ -1,47 +1,43 @@
 var players = [
-  { name: "USER", score: 0 },
-  { name: "CPU1", score: 0 },
-  { name: "CPU2", score: 0 },
-  { name: "CPU3", score: 0 },
-  { name: "CPU4", score: 0 },
+  { name: "USER", number: -1, score: 0 },
+  { name: "CPU1", number: -1, score: 0 },
+  { name: "CPU2", number: -1, score: 0 },
+  { name: "CPU3", number: -1, score: 0 },
+  { name: "CPU4", number: -1, score: 0 },
 ];
 
 const eliminationScore = -10;
 
-/******************************************** MAIN **************************************/
 // displayNumbersSelected();
 // displayComputations();
 // displayCurrentScoreboard();
 // displayUpdatedScoreboard();
 // displayScoreboard();
-/****************************************************************************************/
-// timeout template
-// setTimeout(() => {
-// }, 3000);
 
-function display(text){
+function display(text) {
   const dashboardContainer = document.querySelector(".dashboard-container");
   dashboardContainer.innerHTML = text;
 }
 
-function displayScoreboard() {
+function displayGameInfo(dashboardLabel, activePlayers) {
+  display("");
+
   const dashboardContainer = document.querySelector(".dashboard-container");
 
-  const scoreboardContainer = document.createElement("div");
-  scoreboardContainer.classList.add("scoreboard-container");
+  const gameInfoContainer = document.createElement("div");
 
-  const scoreboardLabel = document.createElement("div");
-  scoreboardLabel.classList.add("scoreboard-label");
-  scoreboardLabel.textContent = "SCOREBOARD";
+  const gameInfoLabel = document.createElement("div");
+  gameInfoLabel.classList.add("game-info-label");
+  gameInfoLabel.textContent = dashboardLabel;
 
-  scoreboardContainer.appendChild(scoreboardLabel);
+  gameInfoContainer.appendChild(gameInfoLabel);
 
-  dashboardContainer.appendChild(scoreboardContainer);
+  dashboardContainer.appendChild(gameInfoContainer);
 
   const playersContainer = document.createElement("div");
   playersContainer.classList.add("players-container");
 
-  players.forEach((player) => {
+  activePlayers.forEach((player) => {
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("player-container");
 
@@ -52,84 +48,75 @@ function displayScoreboard() {
     const score = document.createElement("div");
     score.classList.add("score");
     score.id = `${player.name.toLowerCase()}-score`;
-    score.textContent = `${player.score}`;
+    score.textContent =
+      dashboardLabel === "Numbers Selected"
+        ? `${player.number}`
+        : `${player.score}`;
 
     playerContainer.appendChild(playerName);
     playerContainer.appendChild(score);
 
     playersContainer.appendChild(playerContainer);
   });
-
   dashboardContainer.appendChild(playersContainer);
 }
 
-function displayPlayerChoices(playerNumbers){
-  const playerContainer = createElement("div");
-
-  const playerName = createElement("")
-
+function displayPlayerChoices(playerNumbers) {
+  const playerContainer = document.createElement("div");
 }
 
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
     number.removeAttribute("onclick");
-    number.style.cursor = 'default';
+    number.style.cursor = "default";
   });
 }
 
 function enableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
-    number.addEventListener('mouseover', ()=>{
+    number.addEventListener("mouseover", () => {
       number.style.backgroundColor = "#00090f";
       number.style.color = "white";
-      number.style.cursor = "pointer";      
+      number.style.cursor = "pointer";
     });
 
-    number.addEventListener('mouseout', ()=>{
+    number.addEventListener("mouseout", () => {
       number.style.backgroundColor = "white";
       number.style.color = "black";
-      number.style.cursor = "default";      
+      number.style.cursor = "default";
     });
   });
 }
 
 function playRound(userNum) {
-  
   var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
   );
-  
-  const compChoices = generateRandomCompChoices(activePlayers.length);
-  
-  const playerNumbers =
-  players[0].name === "USER"
-  ? [parseInt(userNum), ...compChoices]
-  : [...compChoices];
+
+  activePlayers.forEach((player) => {
+    if (player.name === "USER") {
+      player.number = userNum;
+    } else {
+      player.number = generateRandomNumber();
+    }
+  });
 
   disableNumbersBtn();
 
   display(userNum);
 
-  setTimeout(() => {
-    display('');
-    displayPlayerChoices(playerNumbers);
+  setInterval(() => {
+    // displayGameInfo("Numbers Selected", activePlayers);
+
+    displayGameInfo("Scoreboard", activePlayers);
+
   }, 2000);
-
-
-  // setTimeout(() => {
-  //   display('');
-  // }, 2000);
-
-  // displayScoreboard();
 
   // enableNumbersBtn();
 }
 
-function generateRandomCompChoices(numOfPlayers) {
-  return Array.from(
-    { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
-    () => Math.floor(Math.random() * 101)
-  );
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 101);
 }
