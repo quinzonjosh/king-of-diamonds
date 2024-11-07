@@ -108,9 +108,9 @@ function playRound(userNum) {
   display(userNum);
 
   setInterval(() => {
-    // displayGameInfo("Numbers Selected", activePlayers);
+    displayGameInfo("Numbers Selected", activePlayers);
 
-    displayGameInfo("Scoreboard", activePlayers);
+    // displayGameInfo("Scoreboard", activePlayers);
 
   }, 2000);
 
