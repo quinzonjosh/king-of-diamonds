@@ -14,6 +14,14 @@ const eliminationScore = -10;
 // displayUpdatedScoreboard();
 // displayScoreboard();
 
+function disableNumbersBtn() {
+  const numbers = document.querySelectorAll(".number");
+  numbers.forEach((number) => {
+    number.removeAttribute("onclick");
+    number.style.cursor = "default";
+  });
+}
+
 function display(text) {
   const dashboardContainer = document.querySelector(".dashboard-container");
   dashboardContainer.innerHTML = text;
@@ -61,16 +69,16 @@ function displayGameInfo(dashboardLabel, activePlayers) {
   dashboardContainer.appendChild(playersContainer);
 }
 
-function displayPlayerChoices(playerNumbers) {
-  const playerContainer = document.createElement("div");
-}
+function displayRegalsNumber(activePlayers){
+  const playerNumbers = activePlayers.map(player => player.number);
+  const sum = playerNumbers.reduce((acc, num)=> acc + num, 0);
+  const average = sum / playerNumbers.length; 
+  const regalsNum = (average * 0.8).toFixed(2);
 
-function disableNumbersBtn() {
-  const numbers = document.querySelectorAll(".number");
-  numbers.forEach((number) => {
-    number.removeAttribute("onclick");
-    number.style.cursor = "default";
-  });
+  display(`${average}   x   0.8   =   ${regalsNum}`);
+
+  return regalsNum;
+
 }
 
 function enableNumbersBtn() {
@@ -95,6 +103,8 @@ function playRound(userNum) {
     (player) => player.score !== eliminationScore
   );
 
+  var regalsNum;
+
   activePlayers.forEach((player) => {
     if (player.name === "USER") {
       player.number = userNum;
@@ -107,14 +117,26 @@ function playRound(userNum) {
 
   display(userNum);
 
-  setInterval(() => {
+  setTimeout(() => {
     displayGameInfo("Numbers Selected", activePlayers);
+    
+    setTimeout(() => {
 
-    // displayGameInfo("Scoreboard", activePlayers);
+      regalsNum = displayRegalsNumber(activePlayers);
+
+      console.log(regalsNum);
+      
+      // displayGameInfo("Scoreboard", activePlayers);
+      
+
+      
+    }, 2000);
+
+    // enableNumbersBtn();
 
   }, 2000);
 
-  // enableNumbersBtn();
+
 }
 
 function generateRandomNumber() {
