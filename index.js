@@ -8,12 +8,6 @@ var players = [
 
 const eliminationScore = -10;
 
-// displayNumbersSelected();
-// displayComputations();
-// displayCurrentScoreboard();
-// displayUpdatedScoreboard();
-// displayScoreboard();
-
 function deductPoints(arr) {
   players
     .filter((_, index) => arr.includes(index))
@@ -21,11 +15,11 @@ function deductPoints(arr) {
 }
 
 function disableNumbersBtn() {
-  // const numbers = document.querySelectorAll(".number");
-  // numbers.forEach((number) => {
-  //   number.replaceWith(number.cloneNode(true));
-  //   number.style.cursor = "default";
-  // });
+  const numbers = document.querySelectorAll(".number");
+  numbers.forEach((number) => {
+    number.removeAttribute('onclick');
+    number.style.cursor = "default";
+  });
 }
 
 function display(text) {
@@ -95,31 +89,23 @@ function displayRegalsNumber(playerNumbers) {
 function enableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
 
-  numbers.forEach(number =>{
-    number.replaceWith(number.cloneNode(true));
-  });
-
-  const updatedNumbers = document.querySelectorAll(".number");
-
-  updatedNumbers.forEach(number=>{
+  numbers.forEach((number) => {
     number.addEventListener("mouseover", () => {
       number.style.backgroundColor = "#00090f";
       number.style.color = "white";
       number.style.cursor = "pointer";
     });
-  
+
     number.addEventListener("mouseout", () => {
       number.style.backgroundColor = "white";
       number.style.color = "black";
       number.style.cursor = "default";
     });
-  
-    number.addEventListener("click", () => {
-      playRound(parseInt(number.textContent));
-    });
-  })
 
-    // console.log(number.textContent);
+    number.setAttribute('onclick', `playRound(${parseInt(number.textContent)})`);
+  });
+
+  // console.log(number.textContent);
 }
 
 function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
@@ -184,7 +170,7 @@ function playRound(userNum) {
 
   const playerNumbers = activePlayers.map((player) => player.number);
 
-  // disableNumbersBtn();
+  disableNumbersBtn();
   display(userNum);
 
   (async function runRound() {
@@ -210,9 +196,8 @@ function playRound(userNum) {
     console.log(playersToRegalsNumDiff);
     console.log(`${players[winnerIndex].name} WINS!`);
 
-    // enableNumbersBtn();
+    enableNumbersBtn();
   })();
-
 }
 
 function waitAndDisplay(message, data, delay) {
