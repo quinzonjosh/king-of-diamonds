@@ -19,6 +19,10 @@ function disableNumbersBtn() {
   numbers.forEach((number) => {
     number.removeAttribute('onclick');
     number.style.cursor = "default";
+    number.addEventListener("mouseover", () => {
+      number.style.backgroundColor = "white";
+      number.style.color = "black";
+    });
   });
 }
 
