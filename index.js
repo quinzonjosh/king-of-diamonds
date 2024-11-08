@@ -14,6 +14,13 @@ const eliminationScore = -10;
 // displayUpdatedScoreboard();
 // displayScoreboard();
 
+function deductPoints(arr) {
+  players
+    .filter((_, index) => arr.includes(index))
+    .forEach((player) => player.score--);
+}
+
+
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
@@ -74,10 +81,16 @@ function displayRegalsNumber(playerNumbers){
   const average = sum / playerNumbers.length; 
   const regalsNum = (average * 0.8).toFixed(2);
 
-  display(`${average}   x   0.8   =   ${regalsNum}`);
+  // display(`${average}   x   0.8   =   ${regalsNum}`);
+
+  const regalsNumContainer = document.createElement("div");
+  regalsNumContainer.textContent = `${average}   x   0.8   =   ${regalsNum}`;
+  regalsNumContainer.classList.add("regals-number-container");
+
+  const dashboardContainer = document.querySelector(".dashboard-container");
+  dashboardContainer.appendChild(regalsNumContainer);
 
   return regalsNum;
-
 }
 
 function enableNumbersBtn() {
@@ -101,13 +114,57 @@ function enableNumbersBtn() {
   });
 }
 
+function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
+  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
+
+  var losingIndices = playersToRegalsNumDiff
+    .map((_, index) => index)
+    .filter((index) => index != winnerIndex);
+
+  // if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
+  //   return;
+  // }
+
+  // if (
+  //   playerNumbers.length <= 3 &&
+  //   playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
+  // ) {
+  //   deductPoints(losingIndices);
+  //   deductPoints(losingIndices);
+  //   return;
+  // }
+
+  // if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
+  //   return;
+  // }
+
+  // if (allPlayerNumsEqual(playerNumbers)) {
+  //   return;
+  // }
+
+  // setTimeout(() => {    
+    // display(`${players[winnerIndex].name} WINS!`);
+  // }, 3000);
+
+  deductPoints(losingIndices);
+
+  return winnerIndex;
+}
+
+function indexOfSmallestDiff(arr) {
+  var lowestNumIndex = 0;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
+  }
+  return lowestNumIndex;
+}
+
 function playRound(userNum) {
   var activePlayers = players.filter(
     (player) => player.score !== eliminationScore
   );
 
-  var regalsNum;
-  var playersToRegalsNumDiff;
+  var regalsNum, playersToRegalsNumDiff, winnerIndex;
 
   activePlayers.forEach((player) => {
     if (player.name === "USER") {
@@ -130,9 +187,17 @@ function playRound(userNum) {
 
       regalsNum = displayRegalsNumber(playerNumbers);
 
-      const playersToRegalsNumDiff = playerNumbers.map((player) =>
+      playersToRegalsNumDiff = playerNumbers.map((player) =>
         parseFloat(Math.abs(regalsNum - player).toFixed(2))
       );
+
+      winnerIndex = evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
+      console.log(playerNumbers)
+      console.log(regalsNum)
+      console.log(playersToRegalsNumDiff)
+      console.log(winnerIndex)
+
+      // displayGameInfo("Scoreboard", activePlayers);
 
       // displayGameInfo("Scoreboard", activePlayers);
       
