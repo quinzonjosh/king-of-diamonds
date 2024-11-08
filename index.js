@@ -192,12 +192,19 @@ function playRound(userNum) {
       );
 
       winnerIndex = evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
-      console.log(playerNumbers)
-      console.log(regalsNum)
-      console.log(playersToRegalsNumDiff)
-      console.log(winnerIndex)
+      // console.log(playerNumbers)
+      // console.log(regalsNum)
+      // console.log(playersToRegalsNumDiff)
+      // console.log(winnerIndex)
 
-      // displayGameInfo("Scoreboard", activePlayers);
+      setTimeout(() => {
+        display(`${players[winnerIndex].name} WINS!`);
+
+        setTimeout(() => {
+          displayGameInfo("Scoreboard", activePlayers);
+        }, 4000);
+
+      }, 4000);
 
       // displayGameInfo("Scoreboard", activePlayers);
       
