@@ -6,7 +6,7 @@ var players = [
   { name: "CPU4", number: -1, score: 0 },
 ];
 
-const eliminationScore = -10;
+const eliminationScore = -2;
 
 function deductPoints(arr) {
   players
@@ -81,7 +81,7 @@ function displayRegalsNumber(playerNumbers) {
   // display(`${average}   x   0.8   =   ${regalsNum}`);
 
   const regalsNumContainer = document.createElement("div");
-  regalsNumContainer.textContent = `${average}   x   0.8   =   ${regalsNum}`;
+  regalsNumContainer.textContent = `${average.toFixed(2)}   x   0.8   =   ${regalsNum}`;
   regalsNumContainer.classList.add("regals-number-container");
 
   const dashboardContainer = document.querySelector(".dashboard-container");
@@ -193,7 +193,7 @@ function playRound(userNum) {
     );
 
     await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
-    await waitAndDisplay("Scoreboard", activePlayers, 4000);
+    await waitAndDisplay("Scoreboard", activePlayers, 2000);
 
     console.log(playerNumbers);
     console.log(regalsNum);
