@@ -20,7 +20,6 @@ function deductPoints(arr) {
     .forEach((player) => player.score--);
 }
 
-
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
@@ -76,9 +75,9 @@ function displayGameInfo(dashboardLabel, activePlayers) {
   dashboardContainer.appendChild(playersContainer);
 }
 
-function displayRegalsNumber(playerNumbers){
-  const sum = playerNumbers.reduce((acc, num)=> acc + num, 0);
-  const average = sum / playerNumbers.length; 
+function displayRegalsNumber(playerNumbers) {
+  const sum = playerNumbers.reduce((acc, num) => acc + num, 0);
+  const average = sum / playerNumbers.length;
   const regalsNum = (average * 0.8).toFixed(2);
 
   // display(`${average}   x   0.8   =   ${regalsNum}`);
@@ -108,7 +107,7 @@ function enableNumbersBtn() {
       number.style.cursor = "default";
     });
 
-    number.addEventListener('click', ()=>{
+    number.addEventListener("click", () => {
       playRound(parseInt(number.textContent));
     });
   });
@@ -142,8 +141,8 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
   //   return;
   // }
 
-  // setTimeout(() => {    
-    // display(`${players[winnerIndex].name} WINS!`);
+  // setTimeout(() => {
+  // display(`${players[winnerIndex].name} WINS!`);
   // }, 3000);
 
   deductPoints(losingIndices);
@@ -174,49 +173,45 @@ function playRound(userNum) {
     }
   });
 
-  const playerNumbers = activePlayers.map(player => player.number);
+  const playerNumbers = activePlayers.map((player) => player.number);
 
   disableNumbersBtn();
-
   display(userNum);
 
-  setTimeout(() => {
-    displayGameInfo("Numbers Selected", activePlayers);
-    
+  (async function runRound() {
+    await waitAndDisplay("Numbers Selected", activePlayers, 2000);
+
+    regalsNum = displayRegalsNumber(playerNumbers);
+
+    playersToRegalsNumDiff = playerNumbers.map((player) =>
+      parseFloat(Math.abs(regalsNum - player).toFixed(2))
+    );
+
+    winnerIndex = evaluateRound(
+      playerNumbers,
+      playersToRegalsNumDiff,
+      regalsNum
+    );
+
+    await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 4000);
+    await waitAndDisplay("Scoreboard", activePlayers, 5000);
+
+  })();
+
+  enableNumbersBtn();
+}
+
+function waitAndDisplay(message, data, delay) {
+  return new Promise((resolve) => {
     setTimeout(() => {
-
-      regalsNum = displayRegalsNumber(playerNumbers);
-
-      playersToRegalsNumDiff = playerNumbers.map((player) =>
-        parseFloat(Math.abs(regalsNum - player).toFixed(2))
-      );
-
-      winnerIndex = evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
-      // console.log(playerNumbers)
-      // console.log(regalsNum)
-      // console.log(playersToRegalsNumDiff)
-      // console.log(winnerIndex)
-
-      setTimeout(() => {
-        display(`${players[winnerIndex].name} WINS!`);
-
-        setTimeout(() => {
-          displayGameInfo("Scoreboard", activePlayers);
-        }, 4000);
-
-      }, 4000);
-
-      // displayGameInfo("Scoreboard", activePlayers);
-      
-      // enableNumbersBtn();
-
-      
-    }, 6000);
-
-
-  }, 2000);
-
-
+      if (message == "Scoreboard" || message == "Numbers Selected") {
+        displayGameInfo(message, data);
+      } else {
+        display(message);
+      }
+      resolve();
+    }, delay);
+  });
 }
 
 function generateRandomNumber() {
