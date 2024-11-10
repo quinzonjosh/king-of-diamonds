@@ -6,7 +6,7 @@ var players = [
   { name: "CPU4", number: -1, score: 0 },
 ];
 
-const eliminationScore = -2;
+const eliminationScore = -5;
 
 function deductPoints(arr) {
   players
@@ -17,7 +17,7 @@ function deductPoints(arr) {
 function disableNumbersBtn() {
   const numbers = document.querySelectorAll(".number");
   numbers.forEach((number) => {
-    number.removeAttribute('onclick');
+    number.removeAttribute("onclick");
     number.style.cursor = "default";
     number.addEventListener("mouseover", () => {
       number.style.backgroundColor = "white";
@@ -81,7 +81,9 @@ function displayRegalsNumber(playerNumbers) {
   // display(`${average}   x   0.8   =   ${regalsNum}`);
 
   const regalsNumContainer = document.createElement("div");
-  regalsNumContainer.textContent = `${average.toFixed(2)}   x   0.8   =   ${regalsNum}`;
+  regalsNumContainer.textContent = `${average.toFixed(
+    2
+  )}   x   0.8   =   ${regalsNum}`;
   regalsNumContainer.classList.add("regals-number-container");
 
   const dashboardContainer = document.querySelector(".dashboard-container");
@@ -106,7 +108,10 @@ function enableNumbersBtn() {
       number.style.cursor = "default";
     });
 
-    number.setAttribute('onclick', `playRound(${parseInt(number.textContent)})`);
+    number.setAttribute(
+      "onclick",
+      `playRound(${parseInt(number.textContent)})`
+    );
   });
 
   // console.log(number.textContent);
@@ -158,13 +163,9 @@ function indexOfSmallestDiff(arr) {
 }
 
 function playRound(userNum) {
-  var activePlayers = players.filter(
-    (player) => player.score !== eliminationScore
-  );
-
   var regalsNum, playersToRegalsNumDiff, winnerIndex;
 
-  activePlayers.forEach((player) => {
+  players.forEach((player) => {
     if (player.name === "USER") {
       player.number = userNum;
     } else {
@@ -172,13 +173,13 @@ function playRound(userNum) {
     }
   });
 
-  const playerNumbers = activePlayers.map((player) => player.number);
+  const playerNumbers = players.map((player) => player.number);
 
   disableNumbersBtn();
   display(userNum);
 
   (async function runRound() {
-    await waitAndDisplay("Numbers Selected", activePlayers, 2000);
+    await waitAndDisplay("Numbers Selected", players, 2000);
 
     regalsNum = displayRegalsNumber(playerNumbers);
 
@@ -192,15 +193,19 @@ function playRound(userNum) {
       regalsNum
     );
 
-    await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
-    await waitAndDisplay("Scoreboard", activePlayers, 2000);
+    await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
+    await waitAndDisplay("Scoreboard", players, 4000);
 
-    console.log(playerNumbers);
-    console.log(regalsNum);
-    console.log(playersToRegalsNumDiff);
-    console.log(`${players[winnerIndex].name} WINS!`);
+    players = players.filter((player) => player.score !== eliminationScore);
+    
+    if (players.length <= 1) {
+      await waitAndDisplay("GAME OVER", players, 4000);
+      disableNumbersBtn();
+    } else {
+      await waitAndDisplay("Select a number", players, 4000);
+      enableNumbersBtn();
+    }
 
-    enableNumbersBtn();
   })();
 }
 
