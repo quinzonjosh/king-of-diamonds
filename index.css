@@ -122,9 +122,3 @@ li{
   font-size: 24px;
   color: black;
 }
-
-.number:hover {
-  background-color: #00090f;
-  color: white;
-  cursor: pointer;
-}

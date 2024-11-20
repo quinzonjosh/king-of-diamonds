@@ -34,6 +34,7 @@ function disableNumbersBtn() {
     number.addEventListener("mouseover", () => {
       number.style.backgroundColor = "white";
       number.style.color = "black";
+      number.style.cursor = "default";
     });
   });
 }
@@ -171,6 +172,8 @@ function generateRandomNumber() {
 function hidePopupModal(){
   const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "hidden";
+
+  enableNumbersBtn();
 }
 
 function indexOfSmallestDiff(arr) {
@@ -182,8 +185,7 @@ function indexOfSmallestDiff(arr) {
 }
 
 function playRound(userNum) {
-  var regalsNum, playersToRegalsNumDiff, winnerIndex;
-
+  var regalsNum, playersToRegalsNumDiff, winnerIndex;  
   players.forEach((player) => {
     if (player.name === "USER") {
       player.number = userNum;
@@ -214,14 +216,17 @@ function playRound(userNum) {
     );
 
     if(winnerIndex !== -1){
-      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
+      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
     } 
 
     await waitAndDisplay("Scoreboard", players, 4000);
 
+    const user = players.find( player => player.name === "USER");
     players = players.filter((player) => player.score !== eliminationScore);
-    
-    if (players.length <= 1) {
+
+    console.log(user);
+
+    if (players.length <= 1 || user.score == eliminationScore) {
       await waitAndDisplay("GAME OVER", players, 4000);
       disableNumbersBtn();
     } else {
