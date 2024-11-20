@@ -1,12 +1,181 @@
+<!-- LAST STOP: bug in eliminating players: try using players variable 
+ instead of creating activePlayers -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>King of Diamonds</title>
-    <script src="cli.js"></script>
+    <script src="index.js"></script>
     <link rel="stylesheet" href="index.css" />
   </head>
+
   <body>
+    <div class="popup-modal">
+      <div class="popup-label">Alice in Borderland<br>King of Diamonds</div>
+      <div class="popup-body">
+        <div class="instructions-content">
+          Welcome to the ultimate test of wit and strategy, where your
+          decisions determine your fate! Will you play it safe, or will cunning
+          and logic guide you to victory?</div>
+
+        <div class="instructions-content">
+          Survive the challenge by strategically selecting numbers and
+          outsmarting your opponents. Only the sharpest minds can prevail!
+        </div>
+
+        <div class="instructions-content">
+          <div>
+            Game Mechanics:
+          </div>
+          <ul>
+            <li>Select a number between 1 and 100</li>
+            <li>At the end of each round, all chosen numbers are averaged and
+              multiplied by 0.8</li>
+            <li>The player whose selected number is closest to the calculated
+              product wins the
+              round</li>
+            <li>The winner gets no point deductions while the losers lose a
+              point</li>
+            <li>If all players select the same number, everyone receives a
+              deduction regardless
+              of the result</li>
+            <li>Any player who accumulates a score of -10 is eliminated
+            </li>
+          </ul>
+        </div>
+
+        <div class="instructions-content">
+          Will you trust your instincts, manipulate your rivals, or find a
+          perfect balance?
+        </div>
+      </div>
+      <button id="close-modal-btn" onclick="hidePopupModal()">Start
+        Game</button>
+    </div>
+    <div class="dashboard-container">Select a number</div>
+    <div class="numbers-board-container">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+
+      <div class="number" id="btn0">0</div>
+      <div class="number" id="btn1">1</div>
+      <div class="number" id="btn2">2</div>
+      <div class="number" id="btn3">3</div>
+      <div class="number" id="btn4">4</div>
+      <div class="number" id="btn5">5</div>
+      <div class="number" id="btn6">6</div>
+      <div class="number" id="btn7">7</div>
+      <div class="number" id="btn8">8</div>
+      <div class="number" id="btn9">9</div>
+      <div class="number" id="btn10">10</div>
+      <div class="number" id="btn11">11</div>
+      <div class="number" id="btn12">12</div>
+      <div class="number" id="btn13">13</div>
+      <div class="number" id="btn14">14</div>
+      <div class="number" id="btn15">15</div>
+      <div class="number" id="btn16">16</div>
+      <div class="number" id="btn17">17</div>
+      <div class="number" id="btn18">18</div>
+      <div class="number" id="btn19">19</div>
+      <div class="number" id="btn20">20</div>
+      <div class="number" id="btn21">21</div>
+      <div class="number" id="btn22">22</div>
+      <div class="number" id="btn23">23</div>
+      <div class="number" id="btn24">24</div>
+      <div class="number" id="btn25">25</div>
+      <div class="number" id="btn26">26</div>
+      <div class="number" id="btn27">27</div>
+      <div class="number" id="btn28">28</div>
+      <div class="number" id="btn29">29</div>
+      <div class="number" id="btn30">30</div>
+      <div class="number" id="btn31">31</div>
+      <div class="number" id="btn32">32</div>
+      <div class="number" id="btn33">33</div>
+      <div class="number" id="btn34">34</div>
+      <div class="number" id="btn35">35</div>
+      <div class="number" id="btn36">36</div>
+      <div class="number" id="btn37">37</div>
+      <div class="number" id="btn38">38</div>
+      <div class="number" id="btn39">39</div>
+      <div class="number" id="btn40">40</div>
+      <div class="number" id="btn41">41</div>
+      <div class="number" id="btn42">42</div>
+      <div class="number" id="btn43">43</div>
+      <div class="number" id="btn44">44</div>
+      <div class="number" id="btn45">45</div>
+      <div class="number" id="btn46">46</div>
+      <div class="number" id="btn47">47</div>
+      <div class="number" id="btn48">48</div>
+      <div class="number" id="btn49">49</div>
+      <div class="number" id="btn50">50</div>
+      <div class="number" id="btn51">51</div>
+      <div class="number" id="btn52">52</div>
+      <div class="number" id="btn53">53</div>
+      <div class="number" id="btn54">54</div>
+      <div class="number" id="btn55">55</div>
+      <div class="number" id="btn56">56</div>
+      <div class="number" id="btn57">57</div>
+      <div class="number" id="btn58">58</div>
+      <div class="number" id="btn59">59</div>
+      <div class="number" id="btn60">60</div>
+      <div class="number" id="btn61">61</div>
+      <div class="number" id="btn62">62</div>
+      <div class="number" id="btn63">63</div>
+      <div class="number" id="btn64">64</div>
+      <div class="number" id="btn65">65</div>
+      <div class="number" id="btn66">66</div>
+      <div class="number" id="btn67">67</div>
+      <div class="number" id="btn68">68</div>
+      <div class="number" id="btn69">69</div>
+      <div class="number" id="btn70">70</div>
+      <div class="number" id="btn71">71</div>
+      <div class="number" id="btn72">72</div>
+      <div class="number" id="btn73">73</div>
+      <div class="number" id="btn74">74</div>
+      <div class="number" id="btn75">75</div>
+      <div class="number" id="btn76">76</div>
+      <div class="number" id="btn77">77</div>
+      <div class="number" id="btn78">78</div>
+      <div class="number" id="btn79">79</div>
+      <div class="number" id="btn80">80</div>
+      <div class="number" id="btn81">81</div>
+      <div class="number" id="btn82">82</div>
+      <div class="number" id="btn83">83</div>
+      <div class="number" id="btn84">84</div>
+      <div class="number" id="btn85">85</div>
+      <div class="number" id="btn86">86</div>
+      <div class="number" id="btn87">87</div>
+      <div class="number" id="btn88">88</div>
+      <div class="number" id="btn89">89</div>
+      <div class="number" id="btn90">90</div>
+      <div class="number" id="btn91">91</div>
+      <div class="number" id="btn92">92</div>
+      <div class="number" id="btn93">93</div>
+      <div class="number" id="btn94">94</div>
+      <div class="number" id="btn95">95</div>
+      <div class="number" id="btn96">96</div>
+      <div class="number" id="btn97">97</div>
+      <div class="number" id="btn98">98</div>
+      <div class="number" id="btn99">99</div>
+      <div class="number" id="btn100">100</div>
+    </div>
   </body>
 </html>
