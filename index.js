@@ -8,6 +8,18 @@ var players = [
 
 const eliminationScore = -5;
 
+function allPlayerNumsEqual(playerNumbers) {
+  const val = playerNumbers[0];
+
+  for (const num of playerNumbers) {
+    if (num !== val) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function deductPoints(arr) {
   players
     .filter((_, index) => arr.includes(index))
@@ -141,17 +153,24 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
   //   return;
   // }
 
-  // if (allPlayerNumsEqual(playerNumbers)) {
-  //   return;
-  // }
-
-  // setTimeout(() => {
-  // display(`${players[winnerIndex].name} WINS!`);
-  // }, 3000);
+  if (allPlayerNumsEqual(playerNumbers)) {
+    // waitAndDisplay("All player numbers are equal. All players lose a point", null, 6000);
+    deductPoints(Array.from({ length: playerNumbers.length }, (_, i) => i));
+    return -1;
+  }
 
   deductPoints(losingIndices);
 
   return winnerIndex;
+}
+
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 101);
+}
+
+function hidePopupModal(){
+  const popupModal = document.querySelector(".popup-modal");
+  popupModal.style.visibility = "hidden";
 }
 
 function indexOfSmallestDiff(arr) {
@@ -170,6 +189,7 @@ function playRound(userNum) {
       player.number = userNum;
     } else {
       player.number = generateRandomNumber();
+      // player.number = 10;      
     }
   });
 
@@ -193,7 +213,10 @@ function playRound(userNum) {
       regalsNum
     );
 
-    await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
+    if(winnerIndex !== -1){
+      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
+    } 
+
     await waitAndDisplay("Scoreboard", players, 4000);
 
     players = players.filter((player) => player.score !== eliminationScore);
@@ -220,8 +243,4 @@ function waitAndDisplay(message, data, delay) {
       resolve();
     }, delay);
   });
-}
-
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 101);
 }

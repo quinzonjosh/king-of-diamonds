@@ -9,7 +9,57 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+  margin: 0;
+  font-family: "Georgia", Arial, sans-serif;
+}
+
+#close-modal-btn{
+  background-color: black;
+  color: white;
+  font-family: "Old English Text MT", "Lucida Blackletter", "Gothic", serif;
+  font-size: 30px;
+  padding: 10px;
+  border: 1px solid white;
+}
+
+#close-modal-btn:hover{
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+li{
+  margin-bottom: 10px;
+}
+
+.instructions-content{
+  margin-bottom: 20px;
+}
+
+.popup-body{
+  font-size: 17px;
+  width: 750px;
+}
+
+.popup-label{
+  margin-bottom: 30px;
+  font-family: "Old English Text MT", "Lucida Blackletter", "Gothic", serif;
+  font-size: 40px;
+}
+
+.popup-modal{
+  background-color: #b61002;
+  width: 800px;
+  color: white;
+  padding: 30px;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  align-items: center;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 1);
+  /* visibility: hidden; */
 }
 
 .regals-number-container{
@@ -37,7 +87,7 @@ body {
 
 .dashboard-container {
   width: 1000px;
-  margin: 25px 0;
+  margin-bottom: 25px;
   background-color: white;
   height: 310px;
   display: flex;
@@ -45,6 +95,7 @@ body {
   align-items: center;
   justify-content: space-evenly;
   font-size: 60px;
+  text-align: center;
 }
 
 .numbers-board-container {
