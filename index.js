@@ -248,7 +248,7 @@ function playRound(userNum) {
     if (player.name === "USER") {
       player.number = userNum;
     } else {
-      player.number = generateRandomNumber();
+      // player.number = generateRandomNumber();
 
       // test case for allPlayerNumsEqual()
       // player.number = 10;
@@ -256,15 +256,15 @@ function playRound(userNum) {
       // test case for hasMatchingNumPenalty()
       // player.number = player.name === "CPU1" || player.name === "CPU2" ? generateRandomNumber() : 10;
 
-      // testcase for playerHasHitRegalsNum()
-      // switch (player.name) {
-      //   case "CPU1":
-      //     player.number = 11;
-      //     break;
-      //   case "CPU2":
-      //     player.number = 22;
-      //     break;
-      // }
+      // test case for playerHasHitRegalsNum()
+      switch (player.name) {
+        case "CPU1":
+          player.number = 11;
+          break;
+        case "CPU2":
+          player.number = 22;
+          break;
+      }
 
       // test case for roundIsZeroOneHundredCase()
       // player.number = 0;
@@ -291,6 +291,11 @@ function playRound(userNum) {
       regalsNum
     );
 
+
+    if(players[winnerIndex].number == regalsNum){
+      await waitAndDisplay(`${players[winnerIndex].name} has hit the exact number!`, null, 3000);
+    }
+
     if (winnerIndex !== -1) {
       await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
     }
@@ -298,13 +303,11 @@ function playRound(userNum) {
     await waitAndDisplay("Scoreboard", players, 4000);
 
     const originalNumOfPlayers = players.length;
-    players = players.filter((player) => player.score !== eliminationScore);
+    players = players.filter((player) => player.score > eliminationScore);
     const numOfEliminatedPlayers = originalNumOfPlayers - players.length;
 
     if (numOfEliminatedPlayers >= 1 && players.length > 1) {
       for (let i = 0; i < numOfEliminatedPlayers; i++) {
-        // 3 seconds to display scoreboard before displaying the
-        // 1st newly added rule.
         await new Promise((resolve) => setTimeout(resolve, i == 0 ? 3000 : 0));
         displayNewRule();
 
@@ -316,7 +319,7 @@ function playRound(userNum) {
     }
 
     const user = players.find((player) => player.name === "USER");
-    if (players.length <= 1 || user.score == eliminationScore) {
+    if (players.length <= 1 || user.score <= eliminationScore) {
       await waitAndDisplay("GAME OVER", players, 4000);
       disableNumbersBtn();
     } else {
