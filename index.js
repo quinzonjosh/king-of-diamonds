@@ -14,7 +14,7 @@ const ruleStack = [
     "Regal's number.",
 ];
 
-const eliminationScore = -5;
+const eliminationScore = -3;
 
 function allPlayerNumsEqual(playerNumbers) {
   const val = playerNumbers[0];
@@ -277,7 +277,7 @@ function playRound(userNum) {
   display(userNum);
 
   (async function runRound() {
-    await waitAndDisplay("Numbers Selected", players, 4000);
+    await waitAndDisplay("Numbers Selected", players, 3000);
 
     regalsNum = displayRegalsNumber(playerNumbers);
 
@@ -292,7 +292,7 @@ function playRound(userNum) {
     );
 
     if (winnerIndex !== -1) {
-      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 1500);
+      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 3000);
     }
 
     await waitAndDisplay("Scoreboard", players, 4000);
@@ -320,7 +320,7 @@ function playRound(userNum) {
       await waitAndDisplay("GAME OVER", players, 4000);
       disableNumbersBtn();
     } else {
-      await waitAndDisplay("Select a number", players, 3000);
+      await waitAndDisplay("Select a number", players, numOfEliminatedPlayers == 0 ? 3000 : 0);
       enableNumbersBtn();
     }
   })();
