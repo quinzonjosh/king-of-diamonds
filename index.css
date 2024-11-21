@@ -14,6 +14,20 @@ body {
   font-family: "Georgia", Arial, sans-serif;
 }
 
+
+.audio-icon-container {
+  position: fixed;
+  bottom: 20px; 
+  right: 20px;  
+  z-index: 1000; 
+}
+
+.audio-icon {
+  width: 80px;  
+  height: auto; 
+  cursor: pointer; 
+}
+
 #close-modal-btn{
   background-color: black;
   color: white;

@@ -16,6 +16,27 @@ const ruleStack = [
 
 const eliminationScore = -3;
 
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleAudio = document.querySelector("#toggle-audio");
+  const backgroundMusic = document.querySelector("#background-music");
+
+  let audioMuted = true;
+
+  toggleAudio.addEventListener("click", () => {
+    audioMuted = !audioMuted;
+
+    console.log(backgroundMusic);
+
+    if(audioMuted){
+      toggleAudio.src ="public/images/mute-icon.png";
+      backgroundMusic.pause();
+    } else {
+      toggleAudio.src ="public/images/unmute-icon.png";
+      backgroundMusic.play();
+    }
+  });
+});
+
 function allPlayerNumsEqual(playerNumbers) {
   const val = playerNumbers[0];
 
@@ -291,9 +312,12 @@ function playRound(userNum) {
       regalsNum
     );
 
-
-    if(players[winnerIndex].number == regalsNum){
-      await waitAndDisplay(`${players[winnerIndex].name} has hit the exact number!`, null, 3000);
+    if (players[winnerIndex].number == regalsNum) {
+      await waitAndDisplay(
+        `${players[winnerIndex].name} has hit the exact number!`,
+        null,
+        3000
+      );
     }
 
     if (winnerIndex !== -1) {
@@ -323,7 +347,11 @@ function playRound(userNum) {
       await waitAndDisplay("GAME OVER", players, 4000);
       disableNumbersBtn();
     } else {
-      await waitAndDisplay("Select a number", players, numOfEliminatedPlayers == 0 ? 3000 : 0);
+      await waitAndDisplay(
+        "Select a number",
+        players,
+        numOfEliminatedPlayers == 0 ? 3000 : 0
+      );
       enableNumbersBtn();
     }
   })();
