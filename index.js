@@ -233,7 +233,7 @@ function playRound(userNum) {
     players = players.filter((player) => player.score !== eliminationScore);
     const numOfEliminatedPlayers = originalNumOfPlayers - players.length;
 
-    if (numOfEliminatedPlayers >= 1) {
+    if (numOfEliminatedPlayers >= 1 && players.length > 1) {
       for(let i=0; i<numOfEliminatedPlayers; i++){
         await new Promise((resolve)=>setTimeout(resolve, 3000));
         displayNewRule();
