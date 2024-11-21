@@ -6,6 +6,14 @@ var players = [
   { name: "CPU4", number: -1, score: 0 },
 ];
 
+const ruleStack = [
+  "If a player chooses 0, the player who chooses 100 wins the round.",
+  "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
+  "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
+    "and the players who chose the same number will lose a point even if the number is closest to " +
+    "Regal's number.",
+];
+
 const eliminationScore = -5;
 
 function allPlayerNumsEqual(playerNumbers) {
@@ -169,7 +177,7 @@ function generateRandomNumber() {
   return Math.floor(Math.random() * 101);
 }
 
-function hidePopupModal(){
+function hidePopupModal() {
   const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "hidden";
 
@@ -185,13 +193,13 @@ function indexOfSmallestDiff(arr) {
 }
 
 function playRound(userNum) {
-  var regalsNum, playersToRegalsNumDiff, winnerIndex;  
+  var regalsNum, playersToRegalsNumDiff, winnerIndex;
   players.forEach((player) => {
     if (player.name === "USER") {
       player.number = userNum;
     } else {
       player.number = generateRandomNumber();
-      // player.number = 10;      
+      // player.number = 10;
     }
   });
 
@@ -215,32 +223,65 @@ function playRound(userNum) {
       regalsNum
     );
 
-    if(winnerIndex !== -1){
+    if (winnerIndex !== -1) {
       await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
-    } 
+    }
 
     await waitAndDisplay("Scoreboard", players, 4000);
 
-    const user = players.find( player => player.name === "USER");
+    const originalNumOfPlayers = players.length;
     players = players.filter((player) => player.score !== eliminationScore);
+    const numOfEliminatedPlayers = originalNumOfPlayers - players.length;
 
-    console.log(user);
+    if (numOfEliminatedPlayers >= 1) {
+      for(let i=0; i<numOfEliminatedPlayers; i++){
+        await new Promise((resolve)=>setTimeout(resolve, 3000));
+        displayNewRule();
 
+        await new Promise((resolve)=>{
+          const closeModalBtn = document.querySelector("#close-modal-btn");
+          closeModalBtn.addEventListener('click', resolve);
+        })
+      }
+    }
+
+    const user = players.find((player) => player.name === "USER");
     if (players.length <= 1 || user.score == eliminationScore) {
       await waitAndDisplay("GAME OVER", players, 4000);
       disableNumbersBtn();
     } else {
-      await waitAndDisplay("Select a number", players, 4000);
+      await waitAndDisplay("Select a number", players, 3000);
       enableNumbersBtn();
     }
-
   })();
+}
+
+function displayNewRule() {
+  const popupLabel = document.querySelector(".popup-label");
+  popupLabel.textContent = "New Rule Added";
+
+  const newRuleContent = document.createElement("div");
+  newRuleContent.classList.add("instructions-content");
+  newRuleContent.style.textAlign = "center";
+  newRuleContent.textContent = ruleStack.pop();
+
+  const popupBody = document.querySelector(".popup-body");
+  popupBody.replaceChildren();
+  popupBody.appendChild(newRuleContent);
+
+  const closeModalBtn = document.querySelector("#close-modal-btn");
+  closeModalBtn.textContent = "Okay";
+
+  disableNumbersBtn();
+
+  const popupModal = document.querySelector(".popup-modal");
+  popupModal.style.visibility = "visible";
 }
 
 function waitAndDisplay(message, data, delay) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      if (message == "Scoreboard" || message == "Numbers Selected") {
+      if (message === "Scoreboard" || message === "Numbers Selected") {
         displayGameInfo(message, data);
       } else {
         display(message);
