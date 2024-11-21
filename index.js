@@ -14,7 +14,7 @@ const ruleStack = [
     "Regal's number.",
 ];
 
-const eliminationScore = -5;
+const eliminationScore = -3;
 
 function allPlayerNumsEqual(playerNumbers) {
   const val = playerNumbers[0];
@@ -224,7 +224,7 @@ function playRound(userNum) {
     );
 
     if (winnerIndex !== -1) {
-      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
+      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 1500);
     }
 
     await waitAndDisplay("Scoreboard", players, 4000);
@@ -234,14 +234,16 @@ function playRound(userNum) {
     const numOfEliminatedPlayers = originalNumOfPlayers - players.length;
 
     if (numOfEliminatedPlayers >= 1 && players.length > 1) {
-      for(let i=0; i<numOfEliminatedPlayers; i++){
-        await new Promise((resolve)=>setTimeout(resolve, 3000));
+      for (let i = 0; i < numOfEliminatedPlayers; i++) {
+        // 3 seconds to display scoreboard before displaying the 
+        // 1st newly added rule.
+        await new Promise((resolve) => setTimeout(resolve, i == 0 ? 3000 : 0));
         displayNewRule();
 
-        await new Promise((resolve)=>{
+        await new Promise((resolve) => {
           const closeModalBtn = document.querySelector("#close-modal-btn");
-          closeModalBtn.addEventListener('click', resolve);
-        })
+          closeModalBtn.addEventListener("click", resolve);
+        });
       }
     }
 
