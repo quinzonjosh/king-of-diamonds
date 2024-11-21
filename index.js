@@ -2,8 +2,8 @@ var players = [
   { name: "USER", number: -1, score: 0 },
   { name: "CPU1", number: -1, score: 0 },
   { name: "CPU2", number: -1, score: 0 },
-  // { name: "CPU3", number: -1, score: 0 },
-  // { name: "CPU4", number: -1, score: 0 },
+  { name: "CPU3", number: -1, score: 0 },
+  { name: "CPU4", number: -1, score: 0 },
 ];
 
 const ruleStack = [
@@ -14,7 +14,7 @@ const ruleStack = [
     "Regal's number.",
 ];
 
-const eliminationScore = -3;
+const eliminationScore = -5;
 
 function allPlayerNumsEqual(playerNumbers) {
   const val = playerNumbers[0];
@@ -180,9 +180,9 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
     return winnerIndex;
   }
 
-  // if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
-  //   return;
-  // }
+  if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
+    return playerNumbers[0] == 0 ? 1 : 0;
+  }
 
   if (allPlayerNumsEqual(playerNumbers)) {
     // waitAndDisplay("All player numbers are equal. All players lose a point", null, 6000);
@@ -257,14 +257,17 @@ function playRound(userNum) {
       // player.number = player.name === "CPU1" || player.name === "CPU2" ? generateRandomNumber() : 10;
 
       // testcase for playerHasHitRegalsNum()
-      switch (player.name) {
-        case "CPU1":
-          player.number = 11;
-          break;
-        case "CPU2":
-          player.number = 22;
-          break;
-      }
+      // switch (player.name) {
+      //   case "CPU1":
+      //     player.number = 11;
+      //     break;
+      //   case "CPU2":
+      //     player.number = 22;
+      //     break;
+      // }
+
+      // test case for roundIsZeroOneHundredCase()
+      // player.number = 0;
     }
   });
 
@@ -321,6 +324,17 @@ function playRound(userNum) {
       enableNumbersBtn();
     }
   })();
+}
+
+function roundIsZeroOneHundredCase(playerNumbers) {
+  if (playerNumbers[0] == 0 && playerNumbers[1] == 100) {
+    deductPoints([0]);
+    return true;
+  } else if (playerNumbers[0] == 100 && playerNumbers[1] == 0) {
+    deductPoints([1]);
+    return true;
+  }
+  return false;
 }
 
 function waitAndDisplay(message, data, delay) {
