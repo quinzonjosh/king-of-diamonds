@@ -2,8 +2,8 @@ var players = [
   { name: "USER", number: -1, score: 0 },
   { name: "CPU1", number: -1, score: 0 },
   { name: "CPU2", number: -1, score: 0 },
-  { name: "CPU3", number: -1, score: 0 },
-  { name: "CPU4", number: -1, score: 0 },
+  // { name: "CPU3", number: -1, score: 0 },
+  // { name: "CPU4", number: -1, score: 0 },
 ];
 
 const ruleStack = [
@@ -94,6 +94,28 @@ function displayGameInfo(dashboardLabel, activePlayers) {
   dashboardContainer.appendChild(playersContainer);
 }
 
+function displayNewRule() {
+  const popupLabel = document.querySelector(".popup-label");
+  popupLabel.textContent = "New Rule Added";
+
+  const newRuleContent = document.createElement("div");
+  newRuleContent.classList.add("instructions-content");
+  newRuleContent.style.textAlign = "center";
+  newRuleContent.textContent = ruleStack.pop();
+
+  const popupBody = document.querySelector(".popup-body");
+  popupBody.replaceChildren();
+  popupBody.appendChild(newRuleContent);
+
+  const closeModalBtn = document.querySelector("#close-modal-btn");
+  closeModalBtn.textContent = "Okay";
+
+  disableNumbersBtn();
+
+  const popupModal = document.querySelector(".popup-modal");
+  popupModal.style.visibility = "visible";
+}
+
 function displayRegalsNumber(playerNumbers) {
   const sum = playerNumbers.reduce((acc, num) => acc + num, 0);
   const average = sum / playerNumbers.length;
@@ -145,18 +167,18 @@ function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
     .map((_, index) => index)
     .filter((index) => index != winnerIndex);
 
-  // if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
-  //   return;
-  // }
+  if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
+    return -1;
+  }
 
-  // if (
-  //   playerNumbers.length <= 3 &&
-  //   playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
-  // ) {
-  //   deductPoints(losingIndices);
-  //   deductPoints(losingIndices);
-  //   return;
-  // }
+  if (
+    playerNumbers.length <= 3 &&
+    playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
+  ) {
+    deductPoints(losingIndices);
+    deductPoints(losingIndices);
+    return winnerIndex;
+  }
 
   // if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
   //   return;
@@ -177,6 +199,27 @@ function generateRandomNumber() {
   return Math.floor(Math.random() * 101);
 }
 
+function hasMatchingNumPenalty(playerNumbers) {
+  const seen = {};
+  const indicesWithMatches = [];
+
+  for (let i = 0; i < playerNumbers.length; i++) {
+    const num = playerNumbers[i];
+    if (seen[num] !== undefined) {
+      indicesWithMatches.push(seen[num], i);
+    } else {
+      seen[num] = i;
+    }
+  }
+
+  if (indicesWithMatches.length !== 0) {
+    deductPoints(indicesWithMatches);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function hidePopupModal() {
   const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "hidden";
@@ -192,6 +235,13 @@ function indexOfSmallestDiff(arr) {
   return lowestNumIndex;
 }
 
+function playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum) {
+  if (playerNumbers[winnerIndex] == Math.round(regalsNum)) {
+    // console.log(`${players[winnerIndex].name} HAS HIT THE REGAL'S NUMBER!`);
+    return true;
+  } else return false;
+}
+
 function playRound(userNum) {
   var regalsNum, playersToRegalsNumDiff, winnerIndex;
   players.forEach((player) => {
@@ -199,7 +249,22 @@ function playRound(userNum) {
       player.number = userNum;
     } else {
       player.number = generateRandomNumber();
+
+      // test case for allPlayerNumsEqual()
       // player.number = 10;
+
+      // test case for hasMatchingNumPenalty()
+      // player.number = player.name === "CPU1" || player.name === "CPU2" ? generateRandomNumber() : 10;
+
+      // testcase for playerHasHitRegalsNum()
+      switch (player.name) {
+        case "CPU1":
+          player.number = 11;
+          break;
+        case "CPU2":
+          player.number = 22;
+          break;
+      }
     }
   });
 
@@ -209,7 +274,7 @@ function playRound(userNum) {
   display(userNum);
 
   (async function runRound() {
-    await waitAndDisplay("Numbers Selected", players, 2000);
+    await waitAndDisplay("Numbers Selected", players, 4000);
 
     regalsNum = displayRegalsNumber(playerNumbers);
 
@@ -235,7 +300,7 @@ function playRound(userNum) {
 
     if (numOfEliminatedPlayers >= 1 && players.length > 1) {
       for (let i = 0; i < numOfEliminatedPlayers; i++) {
-        // 3 seconds to display scoreboard before displaying the 
+        // 3 seconds to display scoreboard before displaying the
         // 1st newly added rule.
         await new Promise((resolve) => setTimeout(resolve, i == 0 ? 3000 : 0));
         displayNewRule();
@@ -256,28 +321,6 @@ function playRound(userNum) {
       enableNumbersBtn();
     }
   })();
-}
-
-function displayNewRule() {
-  const popupLabel = document.querySelector(".popup-label");
-  popupLabel.textContent = "New Rule Added";
-
-  const newRuleContent = document.createElement("div");
-  newRuleContent.classList.add("instructions-content");
-  newRuleContent.style.textAlign = "center";
-  newRuleContent.textContent = ruleStack.pop();
-
-  const popupBody = document.querySelector(".popup-body");
-  popupBody.replaceChildren();
-  popupBody.appendChild(newRuleContent);
-
-  const closeModalBtn = document.querySelector("#close-modal-btn");
-  closeModalBtn.textContent = "Okay";
-
-  disableNumbersBtn();
-
-  const popupModal = document.querySelector(".popup-modal");
-  popupModal.style.visibility = "visible";
 }
 
 function waitAndDisplay(message, data, delay) {
