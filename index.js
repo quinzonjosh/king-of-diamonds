@@ -14,7 +14,7 @@ const ruleStack = [
     "Regal's number.",
 ];
 
-const eliminationScore = -3;
+const eliminationScore = -5;
 
 document.addEventListener("DOMContentLoaded", () => {
   const toggleAudio = document.querySelector("#toggle-audio");
@@ -269,7 +269,7 @@ function playRound(userNum) {
     if (player.name === "USER") {
       player.number = userNum;
     } else {
-      // player.number = generateRandomNumber();
+      player.number = generateRandomNumber();
 
       // test case for allPlayerNumsEqual()
       // player.number = 10;
@@ -278,14 +278,14 @@ function playRound(userNum) {
       // player.number = player.name === "CPU1" || player.name === "CPU2" ? generateRandomNumber() : 10;
 
       // test case for playerHasHitRegalsNum()
-      switch (player.name) {
-        case "CPU1":
-          player.number = 11;
-          break;
-        case "CPU2":
-          player.number = 22;
-          break;
-      }
+      // switch (player.name) {
+      //   case "CPU1":
+      //     player.number = 11;
+      //     break;
+      //   case "CPU2":
+      //     player.number = 22;
+      //     break;
+      // }
 
       // test case for roundIsZeroOneHundredCase()
       // player.number = 0;
@@ -344,7 +344,7 @@ function playRound(userNum) {
 
     const user = players.find((player) => player.name === "USER");
     if (players.length <= 1 || user.score <= eliminationScore) {
-      await waitAndDisplay("GAME OVER", players, 4000);
+      await waitAndDisplay(user.score === eliminationScore ? "YOU LOSE!" : "YOU WIN!", players, 4000);
       disableNumbersBtn();
     } else {
       await waitAndDisplay(

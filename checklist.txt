@@ -34,5 +34,6 @@ choices of the players and the regal's num
     [x] current round winning index
     [x] current score of all players
 
-[] display winner of the game 
-[] audio 
+[x] display winner of the game 
+[x] audio 
+[] add click sound effects
