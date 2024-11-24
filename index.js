@@ -14,7 +14,7 @@ const ruleStack = [
     "Regal's number.",
 ];
 
-const eliminationScore = -5;
+const eliminationScore = -10;
 
 document.addEventListener("DOMContentLoaded", () => {
   const toggleAudio = document.querySelector("#toggle-audio");
@@ -27,11 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log(backgroundMusic);
 
-    if(audioMuted){
-      toggleAudio.src ="public/images/mute-icon.png";
+    if (audioMuted) {
+      toggleAudio.src = "public/images/mute-icon.png";
       backgroundMusic.pause();
     } else {
-      toggleAudio.src ="public/images/unmute-icon.png";
+      toggleAudio.src = "public/images/unmute-icon.png";
       backgroundMusic.play();
     }
   });
@@ -249,11 +249,19 @@ function hidePopupModal() {
 }
 
 function indexOfSmallestDiff(arr) {
-  var lowestNumIndex = 0;
+  var smallest = arr[0];
+  const smallestIndices = [0];
+
   for (let i = 1; i < arr.length; i++) {
-    if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
+    if (arr[i] < arr[lowestNumIndex]) {
+      smallest = arr[i];
+      smallestIndices.length = 0;
+      smallestIndices.push(0);
+    } else if(arr[i] === smallest){
+      smallestIndices.push(i);
+    }
   }
-  return lowestNumIndex;
+  return smallestIndices;
 }
 
 function playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum) {
@@ -344,7 +352,11 @@ function playRound(userNum) {
 
     const user = players.find((player) => player.name === "USER");
     if (players.length <= 1 || user.score <= eliminationScore) {
-      await waitAndDisplay(user.score === eliminationScore ? "YOU LOSE!" : "YOU WIN!", players, 4000);
+      await waitAndDisplay(
+        user.score === eliminationScore ? "YOU LOSE!" : "YOU WIN!",
+        players,
+        4000
+      );
       disableNumbersBtn();
     } else {
       await waitAndDisplay(

@@ -37,3 +37,6 @@ choices of the players and the regal's num
 [x] display winner of the game 
 [x] audio 
 [] add click sound effects
+
+[] game eval for 2-4 players hitting the regals number before one 
+player gets eliminated
