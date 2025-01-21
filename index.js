@@ -41,7 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     await eliminatePlayers(data);
 
-    if (players.length === 1) {
+    if (
+      players.length === 1 ||
+      !players.some((player) => player.name.includes("USER"))
+    ) {
       disableNumbersBtn();
 
       display("endGame", "GAME OVER!", 0);
@@ -68,7 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
     endGameLabel.innerHTML = "GAME OVER!";
 
     const winnerContainer = document.createElement("div");
-    winnerContainer.innerHTML = `${players[0].name} WINS!`;
+
+    if(!players.some((player) => player.name.includes("USER"))){
+      winnerContainer.innerHTML = `YOU LOSE!`;
+    } else {
+      winnerContainer.innerHTML = `${players[0].name} WINS!`;
+    }
+    
 
     const endGameContainer = document.createElement("div");
     endGameContainer.appendChild(endGameLabel);
@@ -337,7 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // return [62, 1, 23]; // 3 players w 1 hitting the regals num
     // return [8,24]            // 2 players no violation
     // return [0,100]           // 2 players w 0 100 rule violation
-
     // return [44,22,22,72,11];
     // return [27,27,27,5,90]
     // return [30, 30, 30, 30, 5];
