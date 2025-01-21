@@ -1,228 +1,201 @@
-document.addEventListener("DOMContentLoaded", () => {
-  var players = [
-    { name: "USER", score: 0 },
-    { name: "CPU1", score: 0 },
-    { name: "CPU2", score: 0 },
-    { name: "CPU3", score: 0 },
-    { name: "CPU4", score: 0 },
-  ];
+let players = [
+  { name: "USER", score: 0 },
+  { name: "CPU1", score: 0 },
+  { name: "CPU2", score: 0 },
+  { name: "CPU3", score: 0 },
+  { name: "CPU4", score: 0 },
+];
 
-  const ruleStack = [
-    "If a player chooses 0, the player who chooses 100 wins the round.",
-    "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
-    "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
-      "and the players who chose the same number will lose a point even if the number is closest to " +
-      "Regal's number.",
-  ];
+let round = 1;
+let eliminationScore = -5;
 
+playGame();
 
-  /******************************************** MAIN **************************************/
-  while (players.length > 1) {
-    playRound();
-  }
-  console.log(
-    players.length === 1 ? `${players[0].name} WINS!!!` : "NOBODY WINS!!!"
-  );
+function playGame() {
+  while (players.length != 1) {
+    console.log(`Round ${round}`);
 
-  function playRound() {
-    const userNum = players[0].name === "USER" ? getUserInput() : -1;
+    let choices = getPlayerChoices();
+    // let choices = getCustomChoices();
 
-    var activePlayers = players.filter(
-      (player) => player.score !== eliminationScore
-    );
+    let regalsNumber = computeRegalsNumber(choices);
 
-    const compChoices = generateRandomCompChoices(activePlayers.length);
-    // const compChoices = generateFixedCompChoices(activePlayers.length);
+    displayPlayerChoices(choices);
 
-    const playerNumbers =
-      players[0].name === "USER"
-        ? [parseInt(userNum), ...compChoices]
-        : [...compChoices];
+    displayRegalsNumber(regalsNumber);
 
-    const regalsNum = computeRegalsNum(playerNumbers, playerNumbers.length);
+    if (!applySpecialRules(choices, regalsNumber)) {
+      applyDefaultRules(choices, regalsNumber);
+    }
 
-    const playersToRegalsNumDiff = playerNumbers.map((player) =>
-      parseFloat(Math.abs(regalsNum - player).toFixed(2))
-    );
-
-    evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum);
-
-    displayResults(playerNumbers, regalsNum, playersToRegalsNumDiff, players);
+    displayScores();
 
     eliminatePlayers();
+    round++;
   }
 
-  function allPlayerNumsEqual(playerNumbers) {
-    const val = playerNumbers[0];
+  console.log("GAME OVER!");
+  console.log(`${players[0].name} WINS!`);
+}
 
-    for (const num of playerNumbers) {
-      if (num !== val) {
-        return false;
-      }
-    }
+function applyDefaultRules(choices, regalsNumber) {
+  let winners = [];
 
-    deductPoints(Array.from({ length: playerNumbers.length }, (_, i) => i));
-    // console.log("ALL PLAYER NUMS EQUAL");
-    return true;
-  }
-
-  function computeRegalsNum(playerNumbers, activePlayers) {
-    return parseFloat(
-      (
-        (playerNumbers.reduce((sum, num) => sum + num, 0) / activePlayers) *
-        0.8
-      ).toFixed(2)
-    );
-  }
-
-  function deductPoints(arr) {
-    players
-      .filter((_, index) => arr.includes(index))
-      .forEach((player) => player.score--);
-  }
-
-  function displayResults(
-    playerNumbers,
-    regalsNum,
-    playersToRegalsNumDiff,
-    players
-  ) {
-    console.log("--------------------------------------------------------");
-    console.log("STATS: ");
-    console.log("Players choices: " + playerNumbers);
-    console.log("Regal's Number: " + regalsNum);
-    console.log(
-      "Players difference to Regal's number: " + playersToRegalsNumDiff
-    );
-    console.log("SCOREBOARD: ");
-    players.forEach((player) => {
-      console.log(`${player.name}: ${player.score}`);
-    });
-  }
-
-  function eliminatePlayers() {
-    const originalPlayerCount = players.length;
-    var eliminatedPlayers = players.filter(
-      (player) => player.score <= eliminationScore
-    );
-
-    eliminatedPlayers.forEach((player) =>
-      console.log(`${player.name} eliminated!`)
-    );
-
-    if (eliminatedPlayers.length != 0) {
-      players = players.filter((player) => player.score > eliminationScore);
-    }
-
-    if (players.length < originalPlayerCount && players.length !== 1) {
-      let rulePop = originalPlayerCount - players.length;
-
-      for (let i = 0; i < rulePop; i++) {
-        console.log("NEW RULE ADDED");
-        console.log(ruleStack.pop());
-      }
-    }
-  }
-
-  function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
-    const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
-
-    var losingIndices = playersToRegalsNumDiff
-      .map((_, index) => index)
-      .filter((index) => index != winnerIndex);
-
-    if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
-      return;
-    }
-
-    if (
-      playerNumbers.length <= 3 &&
-      playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
-    ) {
-      deductPoints(losingIndices);
-      deductPoints(losingIndices);
-      return;
-    }
-
-    if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
-      return;
-    }
-
-    if (allPlayerNumsEqual(playerNumbers)) {
-      return;
-    }
-
-    deductPoints(losingIndices);
-
+  // case for all equal choices
+  if (choices.every((number) => number === choices[0])) {
+    players.forEach((player) => player.score--);
     return;
   }
-
-  function generateRandomCompChoices(numOfPlayers) {
-    return Array.from(
-      { length: players[0].name === "USER" ? numOfPlayers - 1 : numOfPlayers },
-      () => Math.floor(Math.random() * 101)
-    );
-  }
-
-  function generateFixedCompChoices(numOfPlayers) {
-    return [10, 10, 10, 10];
-  }
-
-  function getUserInput() {
-    let userNum = prompt("Select a number from 0 to 100");
-
-    while (userNum < 0 || userNum > 100) {
-      alert("Invalid input.");
-      userNum = prompt("Select a number from 0 to 100");
+  
+  choices.forEach((number, index) => {
+    if (number === Math.floor(regalsNumber)) {
+      winners.push(index);
     }
+  });
 
-    return userNum;
-  }
-
-  function hasMatchingNumPenalty(playerNumbers) {
-    const seen = {};
-    const indicesWithMatches = [];
-
-    for (let i = 0; i < playerNumbers.length; i++) {
-      const num = playerNumbers[i];
-      if (seen[num] !== undefined) {
-        indicesWithMatches.push(seen[num], i);
-      } else {
-        seen[num] = i;
+  // case for multiple winners
+  if (winners.length > 0) {
+    choices.forEach((number, index) => {
+      if (!winners.includes(index)) {
+        players[index].score--;
       }
-    }
+    });
+  } else {
+    // case for only 1 winner
+    let winnerIndex = -1;
+    let smallestDiff = Infinity;
 
-    if (indicesWithMatches.length !== 0) {
-      deductPoints(indicesWithMatches);
-      return true;
-    } else {
-      return false;
+    choices.forEach((number, index) => {
+      let difference = Math.abs(number - regalsNumber);
+      if (difference < smallestDiff) {
+        smallestDiff = difference;
+        winnerIndex = index;
+      }
+    });
+
+    choices.forEach((number, index) => {
+      if (index !== winnerIndex) {
+        players[index].score--;
+      }
+    });
+  }
+}
+
+function applySpecialRules(choices, regalsNumber) {
+  const activePlayers = players.filter(
+    (player) => player.score > eliminationScore
+  ).length;
+
+  // if 4 players remain, apply rule:
+  // if there are 2 people or more who chose the same number, the number
+  // becomes invalid, meaning they will lose a point even if the num
+  // is closes to the regal's number
+  if (activePlayers <= 4) {
+    // var to keep track of how many times a number was chosen
+    let numberFrequency = {};
+
+    choices.forEach(
+      (number) => (numberFrequency[number] = (numberFrequency[number] || 0) + 1)
+    );
+
+    let duplicates = Object.keys(numberFrequency).filter(
+      (number) => numberFrequency[number] > 1
+    );
+
+    if (duplicates.length > 0) {
+      choices.forEach((number, index) => {
+        if (duplicates.includes(String(number))) {
+          players[index].score--;
+          return true;
+        }
+      });
     }
   }
 
-  function indexOfSmallestDiff(arr) {
-    var lowestNumIndex = 0;
-    for (let i = 1; i < arr.length; i++) {
-      if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
-    }
-    return lowestNumIndex;
-  }
-
-  function playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum) {
-    if (playerNumbers[winnerIndex] == Math.round(regalsNum)) {
-      // console.log(`${players[winnerIndex].name} HAS HIT THE REGAL'S NUMBER!`);
-      return true;
-    } else return false;
-  }
-
-  function roundIsZeroOneHundredCase(playerNumbers) {
-    if (playerNumbers[0] == 0 && playerNumbers[1] == 100) {
-      deductPoints([0]);
-      return true;
-    } else if (playerNumbers[0] == 100 && playerNumbers[1] == 0) {
-      deductPoints([1]);
+  // if 3 players remain, apply rule:
+  // if there's a person that chooses the exact (rounded to whole number)
+  // regal's num, the loser penalty is doubled.
+  if (activePlayers <= 3) {
+    if (
+      choices.some((number) => Math.round(number) === Math.round(regalsNumber))
+    ) {
+      let minChoiceIndex = choices.indexOf(Math.min(...choices));
+      players.forEach((_, index) =>
+        index !== minChoiceIndex ? (players[index].score -= 2) : null
+      );
       return true;
     }
-    return false;
   }
-});
+
+  // if 2 players remain, apply rule:
+  // if someone chooses 0, the player who chooses 100 wins the round
+  if (activePlayers <= 2) {
+    if (choices.includes(0) && choices.includes(100)) {
+      let losingIndex = choices.indexOf(0);
+      players[losingIndex].score--;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function computeRegalsNumber(choices) {
+  return (
+    Math.round(
+      (choices.reduce((acc, cur) => acc + cur, 0) / choices.length) * 0.8 * 100
+    ) / 100.0
+  );
+}
+
+function displayPlayerChoices(choices) {
+  console.log("Player choices:");
+
+  choices.forEach((choice, index) =>
+    console.log(`${players[index].name}: ${choice}`)
+  );
+}
+
+function displayRegalsNumber(regalsNumber) {
+  console.log(`Regal's Number: ` + regalsNumber);
+}
+
+function displayScores() {
+  console.log("Player scores:");
+
+  players.forEach((player) => console.log(`${player.name}: ${player.score}`));
+}
+
+function eliminatePlayers() {
+  players.forEach((player) => {
+    if (player.score === eliminationScore) {
+      console.log(`${player.name} Eliminated!`);
+    }
+  });
+
+  players = players.filter((player) => player.score > eliminationScore);
+}
+
+function generateRandomChoices() {
+  return Math.floor(Math.random() * 101);
+}
+
+function getCustomChoices() {
+  // return [2, 4, 6, 8, 11];   // normal case
+  // return [2,2,2,2,2];       // all equal num case
+  // return [7,5,10,7,15]      // multiple winner case
+  // return [2,4,6,8]          // 4 players no violation
+  // return [12,2,4,2]         // 4 players w same num rule violation
+  // return [3,55,2]           // 3 players no violation
+  // return [62,1,23]          // 3 players w 1 hitting the regals num
+  // return [8,24]            // 2 players no violation
+  // return [0,100]           // 2 players w 0 100 rule violation
+}
+
+function getPlayerChoices() {
+  return players.map((player, index) =>
+    index == 0
+      ? parseInt(prompt("Enter a number from 0 to 100: "))
+      : generateRandomChoices()
+  );
+}

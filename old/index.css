@@ -76,14 +76,12 @@ li{
   /* visibility: hidden; */
 }
 
-.regals-number-font{
+.regals-number-container{
   font-size: 38px;
 }
 
-
-
-.dashboard-label{
-  font-size: 43px;
+.score{
+  font-size: 38px;
 }
 
 .player-name{
@@ -94,8 +92,7 @@ li{
 .players-container{
   text-align: center;
   display: flex;
-  gap: 75px;
-  font-size: 35px; 
+  gap: 75px
 }
 
 .players-numbers-label{
@@ -115,12 +112,6 @@ li{
   text-align: center;
 }
 
-.dashboard-multi-line-container{
-  display: flex; 
-  flex-direction: column;
-  gap: 16px; 
-}
-
 .numbers-board-container {
   background-color: #527569;
   width: 1000px;
@@ -130,18 +121,6 @@ li{
   border: 1px solid black;
   gap: 2px;
   padding: 2px;
-}
-
-.number.no-hover{
-  background-color: white;
-  color: black;
-  cursor: default; 
-}
-
-.number:hover{
-  background-color: black;
-  color: white;
-  cursor: pointer;
 }
 
 .number {
