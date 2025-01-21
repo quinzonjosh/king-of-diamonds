@@ -2,12 +2,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let players = [
     { name: "USER", score: 0 },
     { name: "CPU1", score: 0 },
-    // { name: "CPU2", score: 0 },
-    // { name: "CPU3", score: 0 },
-    // { name: "CPU4", score: 0 },
+    { name: "CPU2", score: 0 },
+    { name: "CPU3", score: 0 },
+    { name: "CPU4", score: 0 },
   ];
 
   let eliminationScore = -3;
+
+  let quickDisplayTime = 3000;
+  let defaultDisplayTime = 6000;
+  let longDisplayTime = 9000;
 
   document.querySelectorAll(".number").forEach((button) => {
     button.onclick = () => playRound(parseInt(button.textContent));
@@ -16,24 +20,24 @@ document.addEventListener("DOMContentLoaded", () => {
   async function playRound(number) {
     disableNumbersBtn();
 
-    // let choices = [number, ...generateRandomCPUChoices()];
-    let choices = [...getCustomChoices()];
+    let choices = [number, ...generateRandomCPUChoices()];
+    // let choices = [...getCustomChoices()];
 
     let regalsNumber = computeRegalsNumber(choices);
 
     let data = [choices, regalsNumber];
 
     // display number selected
-    await display("simpleText", String(number), 2000);
+    await display("simpleText", String(number), quickDisplayTime);
 
     // display number selections
-    await display("numberSelection", data, 5000);
+    await display("numberSelection", data, longDisplayTime);
 
     // display round winner
-    await display("simpleText", data, 2000);
+    await display("simpleText", data, quickDisplayTime);
 
     // display scoreboard
-    await display("scoreboard", data, 2000);
+    await display("scoreboard", data, defaultDisplayTime);
 
     await eliminatePlayers(data);
 
@@ -332,7 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // return [3,55,2]           // 3 players no violation
     // return [62, 1, 23]; // 3 players w 1 hitting the regals num
     // return [8,24]            // 2 players no violation
-    return [0,100]           // 2 players w 0 100 rule violation
+    // return [0,100]           // 2 players w 0 100 rule violation
 
     // return [44,22,22,72,11];
     // return [27,27,27,5,90]
