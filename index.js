@@ -29,13 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
     await display("simpleText", String(number), 2000);
 
     // display number selections
-    await display("numberSelection", data, 2000);
+    await display("numberSelection", data, 5000);
 
     // display round winner
     await display("simpleText", data, 2000);
 
     // display scoreboard
-    await display("scoreboard", data, 5000);
+    await display("scoreboard", data, 2000);
 
     await eliminatePlayers(data);
 
@@ -75,36 +75,48 @@ document.addEventListener("DOMContentLoaded", () => {
     return endGameContainer;
   }
 
+  function evaluateRound(data) {
+    let choices = data[0];
+    let regalsNumber = data[1];
+    let winners = [];
+    let smallestDiff = Infinity;
+
+    // CASE: IF ALL PLAYERS CHOSE THE SAME NUM
+    if (choices.every((number) => number === choices[0])) {
+      players.forEach((player) => player.score--);
+      return `All Players Lose the Round!`;
+    }
+
+
+    // CASE: DEFAULT RULE (ONLY 1 WINS BECAUSE THEY HAVE ALL DIFF NUMS)
+    choices.forEach((number, index) => {
+      let difference = Math.abs(number - regalsNumber);
+      if (difference < smallestDiff) {
+        smallestDiff = difference;
+        winners = [index]; 
+      } else if (difference === smallestDiff) {
+        winners.push(index); 
+      }
+    });
+
+    // DEDUCT POINTS
+    choices.forEach((number, index) => {
+      if (!winners.includes(index)) {
+        players[index].score--; 
+      }
+    });
+
+    let winnerNames = winners.map((index) => players[index].name).join(", ");
+    return `${winnerNames} WINS!`;
+
+  }
+
   function createSimpleTextContent(data) {
     const textContainer = document.createElement("div");
     if (typeof data === "string") {
       textContainer.textContent = data;
     } else if (typeof data === "object") {
-      let choices = data[0];
-      let regalsNumber = data[1];
-
-      if (choices.every((number) => number === choices[0])) {
-        players.forEach((player) => player.score--);
-        textContainer.textContent = `All Players Lose the Round!`;
-      } else {
-        let winnerIndex = -1;
-        let smallestDiff = Infinity;
-        choices.forEach((number, index) => {
-          let difference = Math.abs(number - regalsNumber);
-          if (difference < smallestDiff) {
-            smallestDiff = difference;
-            winnerIndex = index;
-          }
-        });
-
-        choices.forEach((number, index) => {
-          if (index !== winnerIndex) {
-            players[index].score--;
-          }
-        });
-
-        textContainer.textContent = `${players[winnerIndex].name} WINS!`;
-      }
+      textContainer.textContent = evaluateRound(data);
     }
     return textContainer;
   }
@@ -262,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getCustomChoices() {
     // return [2, 4, 6, 8, 11];   // normal case
-    return [2, 2, 2, 2, 2]; // all equal num case
+    // return [2, 2, 2, 2, 2]; // all equal num case
     // return [7,5,10,7,15]      // multiple winner case
     // return [2,4,6,8]          // 4 players no violation
     // return [12,2,4,2]         // 4 players w same num rule violation
@@ -270,6 +282,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // return [62,1,23]          // 3 players w 1 hitting the regals num
     // return [8,24]            // 2 players no violation
     // return [0,100]           // 2 players w 0 100 rule violation
+
+    // return [44,22,22,72,11];
+    // return [27,27,27,5,90]
+    // return [30,30,30,30,5]
   }
 
   function generateRandomCPUChoices() {
