@@ -132,28 +132,26 @@ li{
   padding: 2px;
 }
 
-.number.no-hover{
+.number.no-hover {
   background-color: white;
   color: black;
-  cursor: default; 
-}
-
-.number:hover{
-  background-color: black;
-  color: white;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none; 
 }
 
 .number {
   height: 50px;
   border: 1px solid black;
-
   background-color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 24px;
   color: black;
+}
+
+.number:hover {
+  background-color: black;
+  color: white;
+  cursor: pointer;
 }

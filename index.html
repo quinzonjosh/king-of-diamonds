@@ -9,6 +9,52 @@
   </head>
   <body>
 
+    <div class="popup-modal">
+      <div class="popup-label">Alice in Borderland<br />King of Diamonds</div>
+      <div class="popup-body">
+        <div class="instructions-content">
+          Welcome to the ultimate test of wit and strategy, where your decisions
+          determine your fate! Will you play it safe, or will cunning and logic
+          guide you to victory?
+        </div>
+
+        <div class="instructions-content">
+          Survive the challenge by strategically selecting numbers and
+          outsmarting your opponents. Only the sharpest minds can prevail!
+        </div>
+
+        <div class="instructions-content">
+          <div>Game Mechanics:</div>
+          <ul>
+            <li>Select a number between 1 and 100</li>
+            <li>
+              At the end of each round, all chosen numbers are averaged and
+              multiplied by 0.8
+            </li>
+            <li>
+              The player whose selected number is closest to the calculated
+              product wins the round
+            </li>
+            <li>
+              The winner gets no point deductions while the losers lose a point
+            </li>
+            <li>
+              If all players select the same number, everyone receives a
+              deduction regardless of the result
+            </li>
+            <li>Any player who accumulates a score of -10 is eliminated</li>
+          </ul>
+        </div>
+
+        <div class="instructions-content">
+          Will you trust your instincts, manipulate your rivals, or find a
+          perfect balance?
+        </div>
+      </div>
+      <button id="close-modal-btn" onclick="hidePopupModal()">
+        Start Game
+      </button>
+    </div>
     <div class="dashboard-container">Select a Number</div>
     <div class="numbers-board-container">
       <div></div>
