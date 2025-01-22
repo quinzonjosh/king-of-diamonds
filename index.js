@@ -14,6 +14,33 @@ let quickDisplayTime = 3000;
 let defaultDisplayTime = 6000;
 let longDisplayTime = 9000;
 
+const ruleStack = [
+  "If a player chooses 0, the player who chooses 100 wins the round.",
+  "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
+  "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
+    "and the players who chose the same number will lose a point even if the number is closest to " +
+    "Regal's number.",
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleAudio = document.querySelector("#toggle-audio");
+  const backgroundMusic = document.querySelector("#background-music");
+
+  let audioMuted = true;
+
+  toggleAudio.addEventListener("click", () => {
+    audioMuted = !audioMuted;
+
+    if (audioMuted) {
+      toggleAudio.src = "public/images/mute-icon.png";
+      backgroundMusic.pause();
+    } else {
+      toggleAudio.src = "public/images/unmute-icon.png";
+      backgroundMusic.play();
+    }
+  });
+});
+
 async function playRound(number) {
   disableNumbersBtn();
 
@@ -28,7 +55,7 @@ async function playRound(number) {
   await display("simpleText", String(number), quickDisplayTime);
 
   // display number selections
-  await display("numberSelection", data, longDisplayTime);
+  await display("numberSelection", data, defaultDisplayTime);
 
   // display round winner
   await display("simpleText", data, quickDisplayTime);
@@ -56,14 +83,14 @@ async function playRound(number) {
 function disableNumbersBtn() {
   document.querySelectorAll(".number").forEach((button) => {
     button.onclick = null;
-    button.classList.add('no-hover')
-  });  
+    button.classList.add("no-hover");
+  });
 }
 
 function enableNumbersBtn() {
   document.querySelectorAll(".number").forEach((button) => {
     button.onclick = () => playRound(parseInt(button.textContent));
-    button.classList.remove('no-hover')
+    button.classList.remove("no-hover");
   });
 }
 
@@ -212,14 +239,51 @@ function display(formatType, data, duration) {
   });
 }
 
+function displayNewRule() {
+  disableNumbersBtn();
+
+  const popupLabel = document.querySelector(".popup-label");
+  popupLabel.textContent = "New Rule Added";
+
+  const newRuleContent = document.createElement("div");
+  newRuleContent.classList.add("instructions-content");
+  newRuleContent.style.textAlign = "center";
+  newRuleContent.textContent = ruleStack.pop();
+
+  const popupBody = document.querySelector(".popup-body");
+  popupBody.replaceChildren();
+  popupBody.appendChild(newRuleContent);
+
+  const closeModalBtn = document.querySelector("#close-modal-btn");
+  closeModalBtn.textContent = "Okay";
+
+  const popupModal = document.querySelector(".popup-modal");
+  popupModal.style.visibility = "visible";
+}
+
 async function eliminatePlayers(data) {
+  let numOfEliminatedPlayers = 0;
+
   for (let player of players) {
     if (player.score === eliminationScore) {
+      numOfEliminatedPlayers++;
       await display("simpleText", `${player.name} eliminated!`, 2000);
     }
   }
 
   players = players.filter((player) => player.score > eliminationScore);
+  
+  for (let i = 0; i < numOfEliminatedPlayers; i++) {
+    if(players.length >= 2){
+      displayNewRule();
+  
+      await new Promise((resolve) => {
+        const closeModalBtn = document.querySelector("#close-modal-btn");
+        closeModalBtn.addEventListener("click", resolve);
+      });
+    }
+  }
+
 }
 
 function evaluateRound(data) {
