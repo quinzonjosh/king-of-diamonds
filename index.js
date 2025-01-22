@@ -8,7 +8,7 @@ let players = [
   { name: "CPU4", score: 0 },
 ];
 
-let eliminationScore = -3;
+let eliminationScore = -10;
 
 let quickDisplayTime = 3000;
 let defaultDisplayTime = 6000;
@@ -55,13 +55,13 @@ async function playRound(number) {
   await display("simpleText", String(number), quickDisplayTime);
 
   // display number selections
-  await display("numberSelection", data, defaultDisplayTime);
+  await display("numberSelection", data, quickDisplayTime);
 
   // display round winner
   await display("simpleText", data, quickDisplayTime);
 
   // display scoreboard
-  await display("scoreboard", data, defaultDisplayTime);
+  await display("scoreboard", data, quickDisplayTime);
 
   await eliminatePlayers(data);
 
@@ -71,7 +71,9 @@ async function playRound(number) {
   ) {
     disableNumbersBtn();
 
-    display("endGame", "GAME OVER!", 0);
+    displayPrompt("endGame");
+
+    // display("endGame", "GAME OVER!", 0);
   } else {
     // display default text
     await display("simpleText", "Select a Number", 0);
@@ -239,23 +241,29 @@ function display(formatType, data, duration) {
   });
 }
 
-function displayNewRule() {
+function displayPrompt(formatType) {
   disableNumbersBtn();
 
   const popupLabel = document.querySelector(".popup-label");
-  popupLabel.textContent = "New Rule Added";
+  popupLabel.textContent =
+    formatType === "newRule" ? "New Rule Added" : "GAME OVER";
 
-  const newRuleContent = document.createElement("div");
-  newRuleContent.classList.add("instructions-content");
-  newRuleContent.style.textAlign = "center";
-  newRuleContent.textContent = ruleStack.pop();
+  const popupContent = document.createElement("div");
+  popupContent.classList.add("instructions-content");
+  popupContent.style.textAlign = "center";
+  popupContent.textContent =
+    formatType === "newRule"
+      ? ruleStack.pop()
+      : `${players[0].name} WINS THE GAME`;
 
   const popupBody = document.querySelector(".popup-body");
   popupBody.replaceChildren();
-  popupBody.appendChild(newRuleContent);
+  popupBody.appendChild(popupContent);
 
   const closeModalBtn = document.querySelector("#close-modal-btn");
-  closeModalBtn.textContent = "Okay";
+  closeModalBtn.textContent = formatType === "newRule" ? "Okay" : "Play Again";
+
+  disableNumbersBtn();
 
   const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "visible";
@@ -272,18 +280,17 @@ async function eliminatePlayers(data) {
   }
 
   players = players.filter((player) => player.score > eliminationScore);
-  
+
   for (let i = 0; i < numOfEliminatedPlayers; i++) {
-    if(players.length >= 2){
-      displayNewRule();
-  
+    if (players.length >= 2) {
+      displayPrompt("newRule");
+
       await new Promise((resolve) => {
         const closeModalBtn = document.querySelector("#close-modal-btn");
         closeModalBtn.addEventListener("click", resolve);
       });
     }
   }
-
 }
 
 function evaluateRound(data) {
