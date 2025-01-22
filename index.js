@@ -53,10 +53,6 @@ async function playRound(number) {
   }
 }
 
-// document.querySelectorAll(".number").forEach((button) => {
-//   button.onclick = () => playRound(parseInt(button.textContent));
-// });
-
 function disableNumbersBtn() {
   document.querySelectorAll(".number").forEach((button) => {
     button.onclick = null;
