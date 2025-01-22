@@ -1,4 +1,4 @@
-// TO DO: implement game welcome prompt
+// TO DO: add prompts of displaying new rules after eliminations
 
 let players = [
   { name: "USER", score: 0 },
