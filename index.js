@@ -1,5 +1,4 @@
-// TO DO: modify display prompt function by making it dynamic
-// format types: gameMechanics, newRule, endGame
+// TO DO: TEXT ALIGN LEFT THE POP UP BODY OF THE GAME INSTRUCTIONS
 
 // TO DO: WHEN GAME ENDS, DISCONTINUE DISPLAYING NEW RULES
 // DISPLAY GAME OVER IMMEDIATELY (USER CONDI CHECKING)
@@ -12,13 +11,13 @@ let players = [
   { name: "CPU4", score: 0 },
 ];
 
-let eliminationScore = -1;
+let eliminationScore = -5;
 
-let quickDisplayTime = 2000;
+let quickDisplayTime = 1000;
 let defaultDisplayTime = 6000;
 let longDisplayTime = 9000;
 
-const ruleStack = [
+let ruleStack = [
   "If a player chooses 0, the player who chooses 100 wins the round.",
   "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
   "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
@@ -306,6 +305,7 @@ function displayPrompt(formatType) {
     popupLabel.innerHTML = "Alice in Borderland<br>King of Diamonds";
     popupContent.innerHTML = createIntroBody();
     closeModalBtn.textContent = "Start Game";
+    closeModalBtn.onclick = () => hidePopupModal();
   } else if (formatType === "newRule") {
     popupLabel.textContent = "New Rule Added";
     popupContent.textContent = ruleStack.pop();
@@ -462,7 +462,23 @@ function hidePopupModal() {
 }
 
 function resetGame() {
+  players = [
+    { name: "USER", score: 0 },
+    { name: "CPU1", score: 0 },
+    { name: "CPU2", score: 0 },
+    { name: "CPU3", score: 0 },
+    { name: "CPU4", score: 0 },
+  ];
+
+  ruleStack.length = 0;
+  ruleStack = [
+    "If a player chooses 0, the player who chooses 100 wins the round.",
+    "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
+    "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
+      "and the players who chose the same number will lose a point even if the number is closest to " +
+      "Regal's number.",
+  ];
+
   console.log("first");
   displayPrompt("instructions");
 }
-
