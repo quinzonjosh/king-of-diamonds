@@ -1,4 +1,8 @@
-// TO DO: add prompts of displaying new rules after eliminations
+// TO DO: modify display prompt function by making it dynamic
+// format types: gameMechanics, newRule, endGame
+
+// TO DO: WHEN GAME ENDS, DISCONTINUE DISPLAYING NEW RULES
+// DISPLAY GAME OVER IMMEDIATELY (USER CONDI CHECKING)
 
 let players = [
   { name: "USER", score: 0 },
@@ -8,9 +12,9 @@ let players = [
   { name: "CPU4", score: 0 },
 ];
 
-let eliminationScore = -10;
+let eliminationScore = -1;
 
-let quickDisplayTime = 3000;
+let quickDisplayTime = 2000;
 let defaultDisplayTime = 6000;
 let longDisplayTime = 9000;
 
@@ -121,6 +125,49 @@ function createEndGameContent() {
   endGameContainer.appendChild(winnerContainer);
 
   return endGameContainer;
+}
+
+function createIntroBody() {
+  return `
+      <div class="instructions-content">
+          Welcome to the ultimate test of wit and strategy, where your decisions 
+          determine your fate! Will you play it safe, or will cunning and logic 
+          guide you to victory?
+      </div>
+
+      <div class="instructions-content">
+          Survive the challenge by strategically selecting numbers and 
+          outsmarting your opponents. Only the sharpest minds can prevail!
+      </div>
+
+      <div class="instructions-content">
+          <div>Game Mechanics:</div>
+          <ul>
+              <li>Select a number between 1 and 100</li>
+              <li>
+                  At the end of each round, all chosen numbers are averaged and 
+                  multiplied by 0.8
+              </li>
+              <li>
+                  The player whose selected number is closest to the calculated 
+                  product wins the round
+              </li>
+              <li>
+                  The winner gets no point deductions while the losers lose a point
+              </li>
+              <li>
+                  If all players select the same number, everyone receives a 
+                  deduction regardless of the result
+              </li>
+              <li>Any player who accumulates a score of -10 is eliminated</li>
+          </ul>
+      </div>
+
+      <div class="instructions-content">
+          Will you trust your instincts, manipulate your rivals, or find a 
+          perfect balance?
+      </div>
+  `;
 }
 
 function createSimpleTextContent(data) {
@@ -244,28 +291,35 @@ function display(formatType, data, duration) {
 function displayPrompt(formatType) {
   disableNumbersBtn();
 
+  const popupModal = document.querySelector(".popup-modal");
   const popupLabel = document.querySelector(".popup-label");
-  popupLabel.textContent =
-    formatType === "newRule" ? "New Rule Added" : "GAME OVER";
-
+  const popupBody = document.querySelector(".popup-body");
   const popupContent = document.createElement("div");
+  const closeModalBtn = document.querySelector("#close-modal-btn");
+  closeModalBtn.textContent =
+    formatType === "newRule" || "instructions" ? "Okay" : "Play Again";
+
   popupContent.classList.add("instructions-content");
   popupContent.style.textAlign = "center";
-  popupContent.textContent =
-    formatType === "newRule"
-      ? ruleStack.pop()
-      : `${players[0].name} WINS THE GAME`;
 
-  const popupBody = document.querySelector(".popup-body");
+  if (formatType === "instructions") {
+    popupLabel.innerHTML = "Alice in Borderland<br>King of Diamonds";
+    popupContent.innerHTML = createIntroBody();
+    closeModalBtn.textContent = "Start Game";
+  } else if (formatType === "newRule") {
+    popupLabel.textContent = "New Rule Added";
+    popupContent.textContent = ruleStack.pop();
+    closeModalBtn.textContent = "Okay";
+  } else if (formatType === "endGame") {
+    popupLabel.textContent = "GAME OVER";
+    popupContent.textContent = `${players[0].name} WINS THE GAME`;
+    closeModalBtn.textContent = "Play Again";
+    closeModalBtn.onclick = () => resetGame();
+  }
+
   popupBody.replaceChildren();
   popupBody.appendChild(popupContent);
 
-  const closeModalBtn = document.querySelector("#close-modal-btn");
-  closeModalBtn.textContent = formatType === "newRule" ? "Okay" : "Play Again";
-
-  disableNumbersBtn();
-
-  const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "visible";
 }
 
@@ -275,7 +329,7 @@ async function eliminatePlayers(data) {
   for (let player of players) {
     if (player.score === eliminationScore) {
       numOfEliminatedPlayers++;
-      await display("simpleText", `${player.name} eliminated!`, 2000);
+      await display("simpleText", `${player.name} eliminated!`, 500);
     }
   }
 
@@ -406,3 +460,9 @@ function hidePopupModal() {
 
   enableNumbersBtn();
 }
+
+function resetGame() {
+  console.log("first");
+  displayPrompt("instructions");
+}
+
