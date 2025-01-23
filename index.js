@@ -1,5 +1,3 @@
-// TO DO: TEXT ALIGN LEFT THE POP UP BODY OF THE GAME INSTRUCTIONS
-
 // TO DO: WHEN GAME ENDS, DISCONTINUE DISPLAYING NEW RULES
 // DISPLAY GAME OVER IMMEDIATELY (USER CONDI CHECKING)
 
@@ -75,8 +73,6 @@ async function playRound(number) {
     disableNumbersBtn();
 
     displayPrompt("endGame");
-
-    // display("endGame", "GAME OVER!", 0);
   } else {
     // display default text
     await display("simpleText", "Select a Number", 0);
@@ -335,16 +331,19 @@ async function eliminatePlayers(data) {
 
   players = players.filter((player) => player.score > eliminationScore);
 
-  for (let i = 0; i < numOfEliminatedPlayers; i++) {
-    if (players.length >= 2) {
-      displayPrompt("newRule");
-
-      await new Promise((resolve) => {
-        const closeModalBtn = document.querySelector("#close-modal-btn");
-        closeModalBtn.addEventListener("click", resolve);
-      });
+  if(players[0].name === 'USER'){
+    for (let i = 0; i < numOfEliminatedPlayers; i++) {
+      if (players.length >= 2) {
+        displayPrompt("newRule");
+  
+        await new Promise((resolve) => {
+          const closeModalBtn = document.querySelector("#close-modal-btn");
+          closeModalBtn.addEventListener("click", resolve);
+        });
+      }
     }
   }
+
 }
 
 function evaluateRound(data) {
@@ -479,6 +478,5 @@ function resetGame() {
       "Regal's number.",
   ];
 
-  console.log("first");
   displayPrompt("instructions");
 }
