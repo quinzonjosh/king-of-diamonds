@@ -9,9 +9,9 @@ let players = [
   { name: "CPU4", score: 0 },
 ];
 
-let eliminationScore = -5;
+let eliminationScore = -10;
 
-let quickDisplayTime = 1000;
+let quickDisplayTime = 3000;
 let defaultDisplayTime = 6000;
 let longDisplayTime = 9000;
 
@@ -101,25 +101,6 @@ function computeRegalsNumber(choices) {
       (choices.reduce((acc, cur) => acc + cur, 0) / choices.length) * 0.8 * 100
     ) / 100.0
   );
-}
-
-function createEndGameContent() {
-  const endGameLabel = document.createElement("div");
-  endGameLabel.innerHTML = "GAME OVER!";
-
-  const winnerContainer = document.createElement("div");
-
-  if (!players.some((player) => player.name.includes("USER"))) {
-    winnerContainer.innerHTML = `YOU LOSE!`;
-  } else {
-    winnerContainer.innerHTML = `${players[0].name} WINS!`;
-  }
-
-  const endGameContainer = document.createElement("div");
-  endGameContainer.appendChild(endGameLabel);
-  endGameContainer.appendChild(winnerContainer);
-
-  return endGameContainer;
 }
 
 function createIntroBody() {
@@ -273,9 +254,7 @@ function display(formatType, data, duration) {
       content = createNumberSelectionContent(data);
     } else if (formatType === "scoreboard") {
       content = createScoreboardContent();
-    } else if (formatType === "endGame") {
-      content = createEndGameContent();
-    }
+    } 
 
     dashboardContainer.appendChild(content);
 
@@ -307,8 +286,8 @@ function displayPrompt(formatType) {
     popupContent.textContent = ruleStack.pop();
     closeModalBtn.textContent = "Okay";
   } else if (formatType === "endGame") {
-    popupLabel.textContent = "GAME OVER";
-    popupContent.textContent = `${players[0].name} WINS THE GAME`;
+    popupLabel.textContent = "GAME OVER!";
+    popupContent.textContent = players.length > 1 ? `YOU LOSE!` : `${players[0].name} WINS THE GAME!`;
     closeModalBtn.textContent = "Play Again";
     closeModalBtn.onclick = () => resetGame();
   }
