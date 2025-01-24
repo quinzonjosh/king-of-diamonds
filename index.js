@@ -1,6 +1,3 @@
-// TO DO: WHEN GAME ENDS, DISCONTINUE DISPLAYING NEW RULES
-// DISPLAY GAME OVER IMMEDIATELY (USER CONDI CHECKING)
-
 let players = [
   { name: "USER", score: 0 },
   { name: "CPU1", score: 0 },
