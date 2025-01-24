@@ -14,6 +14,20 @@ body {
   font-family: "Georgia", Arial, sans-serif;
 }
 
+
+.audio-icon-container {
+  position: fixed;
+  bottom: 20px; 
+  right: 20px;  
+  z-index: 1000; 
+}
+
+.audio-icon {
+  width: 80px;  
+  height: auto; 
+  cursor: pointer; 
+}
+
 #close-modal-btn{
   background-color: black;
   color: white;
@@ -35,6 +49,7 @@ li{
 
 .instructions-content{
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .popup-body{
@@ -62,12 +77,14 @@ li{
   /* visibility: hidden; */
 }
 
-.regals-number-container{
+.regals-number-font{
   font-size: 38px;
 }
 
-.score{
-  font-size: 38px;
+
+
+.dashboard-label{
+  font-size: 43px;
 }
 
 .player-name{
@@ -78,7 +95,8 @@ li{
 .players-container{
   text-align: center;
   display: flex;
-  gap: 75px
+  gap: 75px;
+  font-size: 35px; 
 }
 
 .players-numbers-label{
@@ -98,6 +116,12 @@ li{
   text-align: center;
 }
 
+.dashboard-multi-line-container{
+  display: flex; 
+  flex-direction: column;
+  gap: 16px; 
+}
+
 .numbers-board-container {
   background-color: #527569;
   width: 1000px;
@@ -109,16 +133,26 @@ li{
   padding: 2px;
 }
 
+.number.no-hover {
+  background-color: white;
+  color: black;
+  cursor: default;
+  pointer-events: none; 
+}
+
 .number {
   height: 50px;
   border: 1px solid black;
-
   background-color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 24px;
   color: black;
+}
+
+.number:hover {
+  background-color: black;
+  color: white;
+  cursor: pointer;
 }

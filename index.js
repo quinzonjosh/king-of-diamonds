@@ -1,68 +1,222 @@
-var players = [
-  { name: "USER", number: -1, score: 0 },
-  { name: "CPU1", number: -1, score: 0 },
-  { name: "CPU2", number: -1, score: 0 },
-  { name: "CPU3", number: -1, score: 0 },
-  { name: "CPU4", number: -1, score: 0 },
+// TO DO: WHEN GAME ENDS, DISCONTINUE DISPLAYING NEW RULES
+// DISPLAY GAME OVER IMMEDIATELY (USER CONDI CHECKING)
+
+let players = [
+  { name: "USER", score: 0 },
+  { name: "CPU1", score: 0 },
+  { name: "CPU2", score: 0 },
+  { name: "CPU3", score: 0 },
+  { name: "CPU4", score: 0 },
 ];
 
-const eliminationScore = -5;
+let eliminationScore = -10;
 
-function allPlayerNumsEqual(playerNumbers) {
-  const val = playerNumbers[0];
+let quickDisplayTime = 3000;
+let defaultDisplayTime = 6000;
+let longDisplayTime = 9000;
 
-  for (const num of playerNumbers) {
-    if (num !== val) {
-      return false;
+let ruleStack = [
+  "If a player chooses 0, the player who chooses 100 wins the round.",
+  "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
+  "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
+    "and the players who chose the same number will lose a point even if the number is closest to " +
+    "Regal's number.",
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleAudio = document.querySelector("#toggle-audio");
+  const backgroundMusic = document.querySelector("#background-music");
+
+  let audioMuted = true;
+
+  toggleAudio.addEventListener("click", () => {
+    audioMuted = !audioMuted;
+
+    if (audioMuted) {
+      toggleAudio.src = "public/images/mute-icon.png";
+      backgroundMusic.pause();
+    } else {
+      toggleAudio.src = "public/images/unmute-icon.png";
+      backgroundMusic.play();
     }
+  });
+});
+
+async function playRound(number) {
+  disableNumbersBtn();
+
+  let choices = [number, ...generateRandomCPUChoices()];
+  // let choices = [...getCustomChoices()];
+
+  let regalsNumber = computeRegalsNumber(choices);
+
+  let data = [choices, regalsNumber];
+
+  // display number selected
+  await display("simpleText", String(number), quickDisplayTime);
+
+  // display number selections
+  await display("numberSelection", data, quickDisplayTime);
+
+  // display round winner
+  await display("simpleText", data, quickDisplayTime);
+
+  // display scoreboard
+  await display("scoreboard", data, quickDisplayTime);
+
+  await eliminatePlayers(data);
+
+  if (
+    players.length === 1 ||
+    !players.some((player) => player.name.includes("USER"))
+  ) {
+    disableNumbersBtn();
+
+    displayPrompt("endGame");
+  } else {
+    // display default text
+    await display("simpleText", "Select a Number", 0);
+
+    enableNumbersBtn();
   }
-
-  return true;
-}
-
-function deductPoints(arr) {
-  players
-    .filter((_, index) => arr.includes(index))
-    .forEach((player) => player.score--);
 }
 
 function disableNumbersBtn() {
-  const numbers = document.querySelectorAll(".number");
-  numbers.forEach((number) => {
-    number.removeAttribute("onclick");
-    number.style.cursor = "default";
-    number.addEventListener("mouseover", () => {
-      number.style.backgroundColor = "white";
-      number.style.color = "black";
-      number.style.cursor = "default";
-    });
+  document.querySelectorAll(".number").forEach((button) => {
+    button.onclick = null;
+    button.classList.add("no-hover");
   });
 }
 
-function display(text) {
-  const dashboardContainer = document.querySelector(".dashboard-container");
-  dashboardContainer.innerHTML = text;
+function enableNumbersBtn() {
+  document.querySelectorAll(".number").forEach((button) => {
+    button.onclick = () => playRound(parseInt(button.textContent));
+    button.classList.remove("no-hover");
+  });
 }
 
-function displayGameInfo(dashboardLabel, activePlayers) {
-  display("");
+function computeRegalsNumber(choices) {
+  return (
+    Math.round(
+      (choices.reduce((acc, cur) => acc + cur, 0) / choices.length) * 0.8 * 100
+    ) / 100.0
+  );
+}
 
-  const dashboardContainer = document.querySelector(".dashboard-container");
+function createIntroBody() {
+  return `
+      <div class="instructions-content">
+          Welcome to the ultimate test of wit and strategy, where your decisions 
+          determine your fate! Will you play it safe, or will cunning and logic 
+          guide you to victory?
+      </div>
 
-  const gameInfoContainer = document.createElement("div");
+      <div class="instructions-content">
+          Survive the challenge by strategically selecting numbers and 
+          outsmarting your opponents. Only the sharpest minds can prevail!
+      </div>
 
-  const gameInfoLabel = document.createElement("div");
-  gameInfoLabel.classList.add("game-info-label");
-  gameInfoLabel.textContent = dashboardLabel;
+      <div class="instructions-content">
+          <div>Game Mechanics:</div>
+          <ul>
+              <li>Select a number between 1 and 100</li>
+              <li>
+                  At the end of each round, all chosen numbers are averaged and 
+                  multiplied by 0.8
+              </li>
+              <li>
+                  The player whose selected number is closest to the calculated 
+                  product wins the round
+              </li>
+              <li>
+                  The winner gets no point deductions while the losers lose a point
+              </li>
+              <li>
+                  If all players select the same number, everyone receives a 
+                  deduction regardless of the result
+              </li>
+              <li>Any player who accumulates a score of -10 is eliminated</li>
+          </ul>
+      </div>
 
-  gameInfoContainer.appendChild(gameInfoLabel);
+      <div class="instructions-content">
+          Will you trust your instincts, manipulate your rivals, or find a 
+          perfect balance?
+      </div>
+  `;
+}
 
-  dashboardContainer.appendChild(gameInfoContainer);
+function createSimpleTextContent(data) {
+  const textContainer = document.createElement("div");
+  if (typeof data === "string") {
+    textContainer.textContent = data;
+  } else if (typeof data === "object") {
+    textContainer.textContent = evaluateRound(data);
+  }
+  return textContainer;
+}
+
+function createNumberSelectionContent(data) {
+  const numbersSelectedContainer = document.createElement("div");
+  const numbersSelectedLabel = document.createElement("div");
+  numbersSelectedLabel.classList.add("dashboard-label");
+  numbersSelectedLabel.textContent = "Numbers Selected";
+  numbersSelectedContainer.appendChild(numbersSelectedLabel);
 
   const playersContainer = document.createElement("div");
   playersContainer.classList.add("players-container");
 
-  activePlayers.forEach((player) => {
+  players.forEach((player, index) => {
+    if (player.score > eliminationScore) {
+      const playerContainer = document.createElement("div");
+      playerContainer.classList.add("player-container");
+
+      const playerName = document.createElement("div");
+      playerName.classList.add("player-name");
+      playerName.textContent = `${player.name}`;
+
+      const number = document.createElement("div");
+      number.textContent = data[0][index];
+
+      playerContainer.appendChild(playerName);
+      playerContainer.appendChild(number);
+
+      playersContainer.appendChild(playerContainer);
+    }
+  });
+
+  const regalsNumberContainer = document.createElement("div");
+  const regalsNumberLabel = document.createElement("div");
+  regalsNumberLabel.classList.add("regals-number-font");
+  regalsNumberLabel.textContent = "Regal's Number";
+
+  const regalsNumberValue = document.createElement("div");
+  regalsNumberValue.textContent = data[1];
+  regalsNumberValue.classList.add("regals-number-font");
+
+  regalsNumberContainer.appendChild(regalsNumberLabel);
+  regalsNumberContainer.appendChild(regalsNumberValue);
+
+  const numberSelectionContainer = document.createElement("div");
+  numberSelectionContainer.classList.add("dashboard-multi-line-container");
+  numberSelectionContainer.appendChild(numbersSelectedContainer);
+  numberSelectionContainer.appendChild(playersContainer);
+  numberSelectionContainer.appendChild(regalsNumberContainer);
+
+  return numberSelectionContainer;
+}
+
+function createScoreboardContent() {
+  const scoreboardContainer = document.createElement("div");
+  const scoreboardLabel = document.createElement("div");
+  scoreboardLabel.classList.add("dashboard-label");
+  scoreboardLabel.textContent = "Scoreboard";
+  scoreboardContainer.appendChild(scoreboardLabel);
+
+  const playersContainer = document.createElement("div");
+  playersContainer.classList.add("players-container");
+
+  players.forEach((player, index) => {
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("player-container");
 
@@ -71,181 +225,237 @@ function displayGameInfo(dashboardLabel, activePlayers) {
     playerName.textContent = `${player.name}`;
 
     const score = document.createElement("div");
-    score.classList.add("score");
-    score.id = `${player.name.toLowerCase()}-score`;
-    score.textContent =
-      dashboardLabel === "Numbers Selected"
-        ? `${player.number}`
-        : `${player.score}`;
+    score.textContent = player.score;
 
     playerContainer.appendChild(playerName);
     playerContainer.appendChild(score);
 
     playersContainer.appendChild(playerContainer);
   });
-  dashboardContainer.appendChild(playersContainer);
+
+  const parentContainer = document.createElement("div");
+  parentContainer.classList.add("dashboard-multi-line-container");
+  parentContainer.appendChild(scoreboardContainer);
+  parentContainer.appendChild(playersContainer);
+
+  return parentContainer;
 }
 
-function displayRegalsNumber(playerNumbers) {
-  const sum = playerNumbers.reduce((acc, num) => acc + num, 0);
-  const average = sum / playerNumbers.length;
-  const regalsNum = (average * 0.8).toFixed(2);
+function display(formatType, data, duration) {
+  return new Promise((res) => {
+    const dashboardContainer = document.querySelector(".dashboard-container");
+    dashboardContainer.textContent = "";
 
-  // display(`${average}   x   0.8   =   ${regalsNum}`);
+    let content;
 
-  const regalsNumContainer = document.createElement("div");
-  regalsNumContainer.textContent = `${average.toFixed(
-    2
-  )}   x   0.8   =   ${regalsNum}`;
-  regalsNumContainer.classList.add("regals-number-container");
+    if (formatType === "simpleText") {
+      content = createSimpleTextContent(data);
+    } else if (formatType === "numberSelection") {
+      content = createNumberSelectionContent(data);
+    } else if (formatType === "scoreboard") {
+      content = createScoreboardContent();
+    } 
 
-  const dashboardContainer = document.querySelector(".dashboard-container");
-  dashboardContainer.appendChild(regalsNumContainer);
+    dashboardContainer.appendChild(content);
 
-  return regalsNum;
-}
-
-function enableNumbersBtn() {
-  const numbers = document.querySelectorAll(".number");
-
-  numbers.forEach((number) => {
-    number.addEventListener("mouseover", () => {
-      number.style.backgroundColor = "#00090f";
-      number.style.color = "white";
-      number.style.cursor = "pointer";
-    });
-
-    number.addEventListener("mouseout", () => {
-      number.style.backgroundColor = "white";
-      number.style.color = "black";
-      number.style.cursor = "default";
-    });
-
-    number.setAttribute(
-      "onclick",
-      `playRound(${parseInt(number.textContent)})`
-    );
+    setTimeout(res, duration);
   });
-
-  // console.log(number.textContent);
 }
 
-function evaluateRound(playerNumbers, playersToRegalsNumDiff, regalsNum) {
-  const winnerIndex = indexOfSmallestDiff(playersToRegalsNumDiff);
+function displayPrompt(formatType) {
+  disableNumbersBtn();
 
-  var losingIndices = playersToRegalsNumDiff
-    .map((_, index) => index)
-    .filter((index) => index != winnerIndex);
+  const popupModal = document.querySelector(".popup-modal");
+  const popupLabel = document.querySelector(".popup-label");
+  const popupBody = document.querySelector(".popup-body");
+  const popupContent = document.createElement("div");
+  const closeModalBtn = document.querySelector("#close-modal-btn");
+  closeModalBtn.textContent =
+    formatType === "newRule" || "instructions" ? "Okay" : "Play Again";
 
-  // if (playerNumbers.length <= 4 && hasMatchingNumPenalty(playerNumbers)) {
-  //   return;
-  // }
+  popupContent.classList.add("instructions-content");
+  popupContent.style.textAlign = "center";
 
-  // if (
-  //   playerNumbers.length <= 3 &&
-  //   playerHasHitRegalsNum(playerNumbers, winnerIndex, regalsNum)
-  // ) {
-  //   deductPoints(losingIndices);
-  //   deductPoints(losingIndices);
-  //   return;
-  // }
-
-  // if (playerNumbers.length <= 2 && roundIsZeroOneHundredCase(playerNumbers)) {
-  //   return;
-  // }
-
-  if (allPlayerNumsEqual(playerNumbers)) {
-    // waitAndDisplay("All player numbers are equal. All players lose a point", null, 6000);
-    deductPoints(Array.from({ length: playerNumbers.length }, (_, i) => i));
-    return -1;
+  if (formatType === "instructions") {
+    popupLabel.innerHTML = "Alice in Borderland<br>King of Diamonds";
+    popupContent.innerHTML = createIntroBody();
+    closeModalBtn.textContent = "Start Game";
+    closeModalBtn.onclick = () => hidePopupModal();
+  } else if (formatType === "newRule") {
+    popupLabel.textContent = "New Rule Added";
+    popupContent.textContent = ruleStack.pop();
+    closeModalBtn.textContent = "Okay";
+  } else if (formatType === "endGame") {
+    popupLabel.textContent = "GAME OVER!";
+    popupContent.textContent = players.length > 1 ? `YOU LOSE!` : `${players[0].name} WINS THE GAME!`;
+    closeModalBtn.textContent = "Play Again";
+    closeModalBtn.onclick = () => resetGame();
   }
 
-  deductPoints(losingIndices);
+  popupBody.replaceChildren();
+  popupBody.appendChild(popupContent);
 
-  return winnerIndex;
+  popupModal.style.visibility = "visible";
 }
 
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 101);
+async function eliminatePlayers(data) {
+  let numOfEliminatedPlayers = 0;
+
+  for (let player of players) {
+    if (player.score === eliminationScore) {
+      numOfEliminatedPlayers++;
+      await display("simpleText", `${player.name} eliminated!`, 500);
+    }
+  }
+
+  players = players.filter((player) => player.score > eliminationScore);
+
+  if(players[0].name === 'USER'){
+    for (let i = 0; i < numOfEliminatedPlayers; i++) {
+      if (players.length >= 2) {
+        displayPrompt("newRule");
+  
+        await new Promise((resolve) => {
+          const closeModalBtn = document.querySelector("#close-modal-btn");
+          closeModalBtn.addEventListener("click", resolve);
+        });
+      }
+    }
+  }
+
 }
 
-function hidePopupModal(){
+function evaluateRound(data) {
+  let choices = data[0];
+  let regalsNumber = data[1];
+  let winners = [];
+  let smallestDiff = Infinity;
+
+  /******************************** SPECIAL RULES **************************/
+  // if 4 players remain, apply rule:
+  // if there are 2 people or more who chose the same number, the number
+  // becomes invalid, meaning they will lose a point even if the num
+  // is closes to the regal's number
+  if (players.length <= 4) {
+    let numberFrequency = {};
+
+    choices.forEach(
+      (number) => (numberFrequency[number] = (numberFrequency[number] || 0) + 1)
+    );
+
+    let duplicates = Object.keys(numberFrequency).filter(
+      (number) => numberFrequency[number] > 1
+    );
+
+    if (duplicates.length > 0) {
+      choices.forEach((number, index) => {
+        if (duplicates.includes(String(number))) {
+          players[index].score--;
+        }
+      });
+      return `Some players have chosen the same number!`;
+    }
+  }
+
+  // if 3 players remain, apply rule:
+  // if there's a person that chooses the exact (rounded to whole number)
+  // regal's num, the loser penalty is doubled.
+  if (players.length <= 3) {
+    if (
+      choices.some((number) => Math.round(number) === Math.round(regalsNumber))
+    ) {
+      let minChoiceIndex = choices.indexOf(Math.min(...choices));
+      players.forEach((_, index) =>
+        index !== minChoiceIndex ? (players[index].score -= 2) : null
+      );
+      return `${players[minChoiceIndex].name} has hit the Regal's Number!`;
+    }
+  }
+
+  // if 2 players remain, apply rule:
+  // if someone chooses 0, the player who chooses 100 wins the round
+  if (players.length <= 2) {
+    if (choices.includes(0) && choices.includes(100)) {
+      let losingIndex = choices.indexOf(0);
+      players[losingIndex].score--;
+      return `100 beats 0! ${players[choices.indexOf(100)].name} wins.`;
+    }
+  }
+
+  /******************************** DEFAULT RULES **************************/
+  // CASE: IF ALL PLAYERS CHOSE THE SAME NUM
+  if (choices.every((number) => number === choices[0])) {
+    players.forEach((player) => player.score--);
+    return `All Players Lose the Round!`;
+  }
+
+  // CASE: DEFAULT RULE (ONLY 1 WINS BECAUSE THEY HAVE ALL DIFF NUMS)
+  choices.forEach((number, index) => {
+    let difference = Math.abs(number - regalsNumber);
+    if (difference < smallestDiff) {
+      smallestDiff = difference;
+      winners = [index];
+    } else if (difference === smallestDiff) {
+      winners.push(index);
+    }
+  });
+
+  // DEDUCT POINTS
+  choices.forEach((number, index) => {
+    if (!winners.includes(index)) {
+      players[index].score--;
+    }
+  });
+
+  let winnerNames = winners.map((index) => players[index].name).join(", ");
+  return `${winnerNames} WINS!`;
+}
+
+function generateRandomCPUChoices() {
+  return Array.from({ length: players.length - 1 }, () =>
+    Math.floor(Math.random() * 101)
+  );
+}
+
+function getCustomChoices() {
+  // return [2, 4, 6, 8, 11];   // normal case
+  // return [2, 2, 2, 2, 2]; // all equal num case
+  // return [7,5,10,7,15]      // multiple winner case
+  // return [2,4,6,8]          // 4 players no violation
+  // return [12,2,4,2]         // 4 players w same num rule violation
+  // return [3,55,2]           // 3 players no violation
+  // return [62, 1, 23]; // 3 players w 1 hitting the regals num
+  // return [8,24]            // 2 players no violation
+  // return [0,100]           // 2 players w 0 100 rule violation
+  // return [44,22,22,72,11];
+  // return [27,27,27,5,90]
+  // return [30, 30, 30, 30, 5];
+}
+
+function hidePopupModal() {
   const popupModal = document.querySelector(".popup-modal");
   popupModal.style.visibility = "hidden";
 
   enableNumbersBtn();
 }
 
-function indexOfSmallestDiff(arr) {
-  var lowestNumIndex = 0;
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] < arr[lowestNumIndex]) lowestNumIndex = i;
-  }
-  return lowestNumIndex;
-}
+function resetGame() {
+  players = [
+    { name: "USER", score: 0 },
+    { name: "CPU1", score: 0 },
+    { name: "CPU2", score: 0 },
+    { name: "CPU3", score: 0 },
+    { name: "CPU4", score: 0 },
+  ];
 
-function playRound(userNum) {
-  var regalsNum, playersToRegalsNumDiff, winnerIndex;  
-  players.forEach((player) => {
-    if (player.name === "USER") {
-      player.number = userNum;
-    } else {
-      player.number = generateRandomNumber();
-      // player.number = 10;      
-    }
-  });
+  ruleStack.length = 0;
+  ruleStack = [
+    "If a player chooses 0, the player who chooses 100 wins the round.",
+    "If a player exactly hits the rounded off Regal's number, the loser penalty is doubled",
+    "If there are 2 people or more choose the same number, the number they choose becomes invalid " +
+      "and the players who chose the same number will lose a point even if the number is closest to " +
+      "Regal's number.",
+  ];
 
-  const playerNumbers = players.map((player) => player.number);
-
-  disableNumbersBtn();
-  display(userNum);
-
-  (async function runRound() {
-    await waitAndDisplay("Numbers Selected", players, 2000);
-
-    regalsNum = displayRegalsNumber(playerNumbers);
-
-    playersToRegalsNumDiff = playerNumbers.map((player) =>
-      parseFloat(Math.abs(regalsNum - player).toFixed(2))
-    );
-
-    winnerIndex = evaluateRound(
-      playerNumbers,
-      playersToRegalsNumDiff,
-      regalsNum
-    );
-
-    if(winnerIndex !== -1){
-      await waitAndDisplay(`${players[winnerIndex].name} WINS!`, null, 2000);
-    } 
-
-    await waitAndDisplay("Scoreboard", players, 4000);
-
-    const user = players.find( player => player.name === "USER");
-    players = players.filter((player) => player.score !== eliminationScore);
-
-    console.log(user);
-
-    if (players.length <= 1 || user.score == eliminationScore) {
-      await waitAndDisplay("GAME OVER", players, 4000);
-      disableNumbersBtn();
-    } else {
-      await waitAndDisplay("Select a number", players, 4000);
-      enableNumbersBtn();
-    }
-
-  })();
-}
-
-function waitAndDisplay(message, data, delay) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (message == "Scoreboard" || message == "Numbers Selected") {
-        displayGameInfo(message, data);
-      } else {
-        display(message);
-      }
-      resolve();
-    }, delay);
-  });
+  displayPrompt("instructions");
 }

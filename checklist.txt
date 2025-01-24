@@ -20,16 +20,23 @@ choices of the players and the regal's num
     [x] case: 1 winner
     [] case: multiple winners
 
-[] deduct points to the losing players
+[x] deduct points to the losing players
 
-[] eliminate players if score = eliminationScore = -10
+[x] eliminate players if score = eliminationScore = -10
 [] log that the player is eliminated
 
-[] update the list of players remaining
+[x] update the list of players remaining
 
-[] display stats
-    [] player's choices
-    [] regal's number
-    [] playersToRegalsNumDiff
-    [] winning index
-    [] current score of all players
+[x] display stats
+    [x] player's choices
+    [x] regal's number
+    [x] playersToRegalsNumDiff
+    [x] current round winning index
+    [x] current score of all players
+
+[x] display winner of the game 
+[x] audio 
+[] add click sound effects
+
+[] game eval for 2-4 players hitting the regals number before one 
+player gets eliminated
